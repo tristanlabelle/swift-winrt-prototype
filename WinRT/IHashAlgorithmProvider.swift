@@ -1,18 +1,6 @@
 import CWinRT
 
-// 905a0fef-bc53-11df-8c49-001e4fc686da
-public protocol IBufferByteAccessProtocol {
-    func buffer() throws -> UnsafeMutablePointer<UInt8>
-}
-
-public protocol IBufferProtocol {
-    var capacity: UInt32 { get throws }
-    var length: UInt32 { get throws }
-    func length(_ value: UInt32) throws
-}
-public typealias IBuffer = any IBufferProtocol
-
-internal protocol IHashComputationProtocol {
+internal protocol IHashComputationProtocol: IUnknownProtocol {
     func append(_ data: IBuffer!) throws
     func getValueAndReset() throws -> IBuffer!
 }
@@ -29,7 +17,7 @@ public class CryptographicHash {
     public func getValueAndReset() throws -> IBuffer! { try impl.getValueAndReset() }
 }
 
-internal protocol IHashAlgorithmProviderProtocol: AnyObject {
+internal protocol IHashAlgorithmProviderProtocol: IUnknownProtocol {
     var algorithmName: String { get throws }
     var hashLength: UInt32 { get throws }
     func hashData(_ data: IBuffer!) throws -> IBuffer!
@@ -37,7 +25,7 @@ internal protocol IHashAlgorithmProviderProtocol: AnyObject {
 }
 internal typealias IHashAlgorithmProvider = any IHashAlgorithmProviderProtocol
 
-internal protocol IHashAlgorithmProviderStaticsProtocol: AnyObject {
+internal protocol IHashAlgorithmProviderStaticsProtocol: IUnknownProtocol {
     func openAlgorithm(_ algorithm: String) throws -> IHashAlgorithmProvider!
 }
 internal typealias IHashAlgorithmProviderStatics = any IHashAlgorithmProviderStaticsProtocol

@@ -1,14 +1,14 @@
 import CWinRT
 import struct Foundation.UUID
 
-protocol COMProjection {
+public protocol COMProjection {
     associatedtype SwiftType
     associatedtype CStruct
     typealias CPointer = UnsafeMutablePointer<CStruct>
 
     static var iid: CWinRT.IID { get }
 
-    static func toSwift(_ obj: CPointer) throws -> SwiftType
+    static func toSwift(_ pointer: CPointer) throws -> SwiftType
     static func toC(_ obj: SwiftType) throws -> CPointer
 }
 
