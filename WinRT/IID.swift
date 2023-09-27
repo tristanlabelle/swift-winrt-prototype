@@ -1,6 +1,8 @@
 import CWinRT
 
-extension CWinRT.IID: Equatable {
+public typealias IID = CWinRT.IID
+
+extension IID: Equatable {
     public static func ==(lhs: Self, rhs: Self) -> Bool {
         lhs.Data1 == rhs.Data1 && lhs.Data2 == rhs.Data2 && lhs.Data3 == rhs.Data3
             && lhs.Data4.0 == rhs.Data4.0 && lhs.Data4.1 == rhs.Data4.1

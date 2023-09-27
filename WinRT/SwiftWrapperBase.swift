@@ -16,15 +16,15 @@ internal class SwiftWrapperBase<CStruct>: IUnknownProtocol {
         pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
 
-    func queryInterface<Projection: COMProjection>(_: Projection.Type) throws -> Projection.SwiftType? {
-        var iid = Projection.iid
+    func queryInterface(_ iid: CWinRT.IID) throws -> IUnknown? {
+        var iid = iid
         var rawPointer: UnsafeMutableRawPointer?
         let result = self.unknown.pointee.lpVtbl.pointee.QueryInterface(self.unknown, &iid, &rawPointer)
         let unknown = rawPointer?.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)
         defer { _ = unknown?.pointee.lpVtbl.pointee.Release(unknown) }
         if result == COMError.noInterface.hr { return nil }
         try COMError.throwIfFailed(result)
-        guard let rawPointer else { return nil }
-        return try Projection.toSwift(rawPointer.bindMemory(to: Projection.CStruct.self, capacity: 1))
+        guard let unknown else { return nil }
+        return try IUnknownProjection.toSwift(unknown)
     }
 }
