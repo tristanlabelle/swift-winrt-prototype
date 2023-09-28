@@ -1,17 +1,16 @@
 import CWinRT
 import struct Foundation.UUID
 
-public protocol COMProjection {
+public protocol COMProjection: AnyObject {
     associatedtype SwiftType
     associatedtype CStruct
+    associatedtype CVTableStruct
     typealias CPointer = UnsafeMutablePointer<CStruct>
+    typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
     static var iid: CWinRT.IID { get }
-
-    static func toSwift(_ pointer: CPointer) throws -> SwiftType
-    static func toC(_ obj: SwiftType) throws -> CPointer
 }
 
 protocol WinRTActivatableProjection: COMProjection {
-    static var activatableId: HString { get }
+    static var activatableId: String { get }
 }

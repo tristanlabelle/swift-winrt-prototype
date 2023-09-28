@@ -12,4 +12,15 @@ public struct COMError: Error {
         if hr >= 0 { return hr }
         throw COMError(hr: hr)
     }
+
+    public static func `catch`(_ block: () throws -> Void) -> HRESULT {
+        do {
+            try block()
+            return 0
+        } catch let error as COMError {
+            return error.hr
+        } catch {
+            return COMError.fail.hr
+        }
+    }
 }

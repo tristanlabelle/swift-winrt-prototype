@@ -1,6 +1,6 @@
 import CWinRT
 
-internal func getActivationFactory<Projection: WinRTActivatableProjection>(_: Projection.Type) throws -> Projection.SwiftType {
+internal func getActivationFactory<Projection: WinRTActivatableProjection>(_: Projection.Type) throws -> Projection.AnyProtocol {
     var iid = Projection.iid
     var factory: UnsafeMutableRawPointer?
     try COMError.throwIfFailed(CWinRT.RoGetActivationFactory(Projection.activatableId.value, &iid, &factory))
