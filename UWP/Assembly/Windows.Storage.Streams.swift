@@ -1,15 +1,16 @@
 import CWinRT
 import WinRT
 
-public protocol IBufferProtocol: IInspectableProtocol {
+public protocol WindowsStorageStreams_IBufferProtocol: IInspectableProtocol {
     var capacity: UInt32 { get throws }
     var length: UInt32 { get throws }
     func length(_ value: UInt32) throws
 }
-public typealias IBuffer = any IBufferProtocol
+public typealias WindowsStorageStreams_IBuffer = any WindowsStorageStreams_IBufferProtocol
 
-public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTTwoWayProjection, IBufferProtocol {
-    public typealias SwiftType = IBuffer
+public final class WindowsStorageStreams_IBufferProjection:
+        WinRTObject<WindowsStorageStreams_IBufferProjection>, WinRTTwoWayProjection, WindowsStorageStreams_IBufferProtocol {
+    public typealias SwiftType = WindowsStorageStreams_IBuffer
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBuffer
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBufferVtbl
 

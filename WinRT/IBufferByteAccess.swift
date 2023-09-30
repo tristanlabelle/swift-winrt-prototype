@@ -1,14 +1,14 @@
 import CWinRT
 
-public protocol IBufferByteAccessProtocol: IUnknownProtocol {
+public protocol WindowsStorageStreams_IBufferByteAccessProtocol: IUnknownProtocol {
     var buffer: UnsafeMutablePointer<UInt8>! { get throws }
 }
-public typealias IBufferByteAccess = any IBufferByteAccessProtocol
+public typealias WindowsStorageStreams_IBufferByteAccess = any WindowsStorageStreams_IBufferByteAccessProtocol
 
-public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProjection>, COMTwoWayProjection, IBufferByteAccessProtocol {
-    public typealias SwiftType = IBufferByteAccess
-    public typealias CStruct = CWinRT.IBufferByteAccess
-    public typealias CVTableStruct = CWinRT.IBufferByteAccessVtbl
+public final class WindowsStorageStreams_IBufferByteAccessProjection: COMObject<WindowsStorageStreams_IBufferByteAccessProjection>, COMTwoWayProjection, WindowsStorageStreams_IBufferByteAccessProtocol {
+    public typealias SwiftType = WindowsStorageStreams_IBufferByteAccess
+    public typealias CStruct = CWinRT.WindowsStorageStreams_IBufferByteAccess
+    public typealias CVTableStruct = CWinRT.WindowsStorageStreams_IBufferByteAccessVtbl
 
     public static let iid = IID(0x905A0FEF, 0xBC53, 0x11DF, 0x8C49, 0x001E4FC686DA)
     public static var _vtable: CVTablePointer { withUnsafePointer(to: &_vtableStruct) { $0 } }

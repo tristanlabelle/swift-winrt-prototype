@@ -1,7 +1,7 @@
 import WinRT
 import UWP
 
-final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol {
+final class SwiftBuffer: WinRTExport, WindowsStorageStreams_IBufferProtocol, WindowsStorageStreams_IBufferByteAccessProtocol {
     let bufferPointer: UnsafeMutableBufferPointer<UInt8>
 
     init(_ array: [UInt8]) {
@@ -14,8 +14,8 @@ final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol
     }
 
     public static let projections: [any COMTwoWayProjection.Type] = [
-        IBufferProjection.self,
-        IBufferByteAccessProjection.self
+        WindowsStorageStreams_IBufferProjection.self,
+        WindowsStorageStreams_IBufferByteAccessProjection.self
     ]
 
     public var capacity: UInt32 { get throws { UInt32(bufferPointer.count) } }
