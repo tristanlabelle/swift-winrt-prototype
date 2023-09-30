@@ -3,27 +3,27 @@
 #include <robuffer.h>
 
 #ifndef __cplusplus
-EXTERN_C const IID IID_WindowsStorageStreams_IBufferByteAccess;
+EXTERN_C const IID IID_IBufferByteAccess;
 
-typedef interface WindowsStorageStreams_IBufferByteAccess WindowsStorageStreams_IBufferByteAccess;
+typedef interface IBufferByteAccess IBufferByteAccess;
 
-typedef struct WindowsStorageStreams_IBufferByteAccessVtbl
+typedef struct IBufferByteAccessVtbl
 {
     BEGIN_INTERFACE
 
-    HRESULT (STDMETHODCALLTYPE* QueryInterface)(WindowsStorageStreams_IBufferByteAccess* This,
+    HRESULT (STDMETHODCALLTYPE* QueryInterface)(IBufferByteAccess* This,
         REFIID riid,
         void** ppvObject);
-    ULONG (STDMETHODCALLTYPE* AddRef)(WindowsStorageStreams_IBufferByteAccess* This);
-    ULONG (STDMETHODCALLTYPE* Release)(WindowsStorageStreams_IBufferByteAccess* This);
-    HRESULT (STDMETHODCALLTYPE* Buffer)(WindowsStorageStreams_IBufferByteAccess* This,
+    ULONG (STDMETHODCALLTYPE* AddRef)(IBufferByteAccess* This);
+    ULONG (STDMETHODCALLTYPE* Release)(IBufferByteAccess* This);
+    HRESULT (STDMETHODCALLTYPE* Buffer)(IBufferByteAccess* This,
         BYTE** data);
 
     END_INTERFACE
-} WindowsStorageStreams_IBufferByteAccessVtbl;
+} IBufferByteAccessVtbl;
 
-interface WindowsStorageStreams_IBufferByteAccess
+interface IBufferByteAccess
 {
-    CONST_VTBL struct WindowsStorageStreams_IBufferByteAccessVtbl* lpVtbl;
+    CONST_VTBL struct IBufferByteAccessVtbl* lpVtbl;
 };
 #endif

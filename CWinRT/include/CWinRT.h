@@ -7,6 +7,7 @@
 #include <roapi.h>
 
 #include "IBufferByteAccess.h"
+#include "ISwiftObject.h"
 
 #include <windows.foundation.collections.h>
 #include <windows.security.cryptography.core.h>

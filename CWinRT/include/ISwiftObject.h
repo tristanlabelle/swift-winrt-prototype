@@ -19,7 +19,7 @@ typedef struct ISwiftObjectVtbl
     void* (STDMETHODCALLTYPE* GetSwiftObject)(ISwiftObject* This);
 
     END_INTERFACE
-} WindowsStorageStreams_IBufferByteAccessVtbl;
+} ISwiftObjectVtbl;
 
 interface ISwiftObject
 {
