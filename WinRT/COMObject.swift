@@ -19,6 +19,10 @@ open class COMObject<Projection: COMProjection>: IUnknownProtocol {
         _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
 
+    public var _vtable: Projection.CVTableStruct {
+        (_unknown.pointee.lpVtbl.withMemoryRebound(to: Projection.CVTableStruct.self, capacity: 1) { $0 }).pointee
+    }
+
     public required init(pointer: Projection.CPointer) {
         self._pointer = pointer
         _ = self._unknown.pointee.lpVtbl.pointee.AddRef(_unknown)

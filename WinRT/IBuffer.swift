@@ -12,9 +12,9 @@ public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTProje
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBuffer
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBufferVtbl
 
-    public var capacity: UInt32 { get throws { try _getter(Self._vtable.get_Capacity) } }
-    public var length: UInt32 { get throws { try _getter(Self._vtable.get_Length) } }
-    public func length(_ value: UInt32) throws { try _setter(Self._vtable.put_Length, value) }
+    public var capacity: UInt32 { get throws { try _getter(_vtable.get_Capacity) } }
+    public var length: UInt32 { get throws { try _getter(_vtable.get_Length) } }
+    public func length(_ value: UInt32) throws { try _setter(_vtable.put_Length, value) }
 
     public static let iid = IID(0x905A0FE0, 0xBC53, 0x11DF, 0x8C49, 0x001E4FC686DA)
     public static var runtimeClassName: String { "Windows.Storage.Streams.IBuffer" }
@@ -42,7 +42,7 @@ public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProje
     public typealias CStruct = CWinRT.IBufferByteAccess
     public typealias CVTableStruct = CWinRT.IBufferByteAccessVtbl
 
-    public var capacity: UnsafeMutablePointer<UInt8>! { get throws { try _getter(Self._vtable.Buffer) } }
+    public var capacity: UnsafeMutablePointer<UInt8>! { get throws { try _getter(_vtable.Buffer) } }
 
     public static let iid = IID(0x905A0FEF, 0xBC53, 0x11DF, 0x8C49, 0x001E4FC686DA)
     public static var vtable: CVTablePointer { withUnsafePointer(to: &_vtable) { $0 } }
