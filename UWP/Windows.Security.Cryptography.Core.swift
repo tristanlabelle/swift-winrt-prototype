@@ -1,4 +1,5 @@
 import CWinRT
+import WinRT
 
 public final class CryptographicHash: WinRTObject<CryptographicHash>, WinRTProjection {
     public typealias SwiftType = CryptographicHash

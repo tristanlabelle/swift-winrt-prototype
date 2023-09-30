@@ -1,4 +1,5 @@
 import WinRT
+import UWP
 
 let windowsRuntime = try WindowsRuntimeScope(multithreaded: false)
 let provider = try HashAlgorithmProvider.openAlgorithm("SHA256")!

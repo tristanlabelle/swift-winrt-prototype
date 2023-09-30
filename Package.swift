@@ -14,9 +14,13 @@ let package = Package(
             name: "WinRT",
             dependencies: ["CWinRT"],
             path: "WinRT"),
+        .target(
+            name: "UWP",
+            dependencies: ["CWinRT", "WinRT"],
+            path: "UWP"),
         .executableTarget(
             name: "App",
-            dependencies: ["WinRT"],
+            dependencies: ["WinRT", "UWP"],
             path: "App")
     ]
 )

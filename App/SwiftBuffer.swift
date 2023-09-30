@@ -1,4 +1,5 @@
 import WinRT
+import UWP
 
 final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol {
     let bufferPointer: UnsafeMutableBufferPointer<UInt8>
