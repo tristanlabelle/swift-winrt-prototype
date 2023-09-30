@@ -5,7 +5,7 @@ public protocol IUnknownProtocol: AnyObject {
 }
 public typealias IUnknown = any IUnknownProtocol
 
-public final class IUnknownProjection: COMObject<IUnknownProjection>, COMImplementable {
+public final class IUnknownProjection: COMObject<IUnknownProjection>, COMTwoWayProjection {
     public typealias SwiftType = IUnknown
     public typealias CStruct = CWinRT.IUnknown
     public typealias CVTableStruct = CWinRT.IUnknownVtbl

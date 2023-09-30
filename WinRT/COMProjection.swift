@@ -9,13 +9,22 @@ public protocol COMProjection: AnyObject {
     typealias CPointer = UnsafeMutablePointer<CStruct>
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
-    static func toSwift(pointer: CPointer) -> SwiftType
-
     static var iid: CWinRT.IID { get }
+
+    static func _create(_ pointer: CPointer) -> SwiftType
+    static func toSwift(_ pointer: CPointer) -> SwiftType
+    static func asCOMWithRef(_ object: SwiftType) -> CPointer?
 }
 
-// Protocol for strongly-typed two-way COM interface projections into Swift.
-public protocol COMImplementable: COMProjection {
+extension COMProjection {
+    public static func toSwift(_ pointer: CPointer?) -> SwiftType? {
+        guard let pointer = pointer else { return nil }
+        return toSwift(pointer)
+    }
+}
+
+// Protocol for strongly-typed two-way COM interface projections into and from Swift.
+public protocol COMTwoWayProjection: COMProjection {
     static var _vtable: CVTablePointer { get }
 }
 
@@ -24,8 +33,8 @@ public protocol WinRTProjection: COMProjection {
     static var runtimeClassName: String { get }
 }
 
-// Protocol for strongly-typed two-way WinRT interface/delegate/runtimeclass projections into Swift.
-public protocol WinRTImplementable: WinRTProjection, COMImplementable {}
+// Protocol for strongly-typed two-way WinRT interface/delegate/runtimeclass projections into and from Swift.
+public protocol WinRTTwoWayProjection: WinRTProjection, COMTwoWayProjection {}
 
 protocol WinRTActivatableProjection: COMProjection {
     static var activatableId: String { get }

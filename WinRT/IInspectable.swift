@@ -7,7 +7,7 @@ public protocol IInspectableProtocol: IUnknownProtocol {
 }
 public typealias IInspectable = any IInspectableProtocol
 
-public final class IInspectableProjection: WinRTObject<IInspectableProjection>, WinRTImplementable {
+public final class IInspectableProjection: WinRTObject<IInspectableProjection>, WinRTTwoWayProjection {
     public typealias SwiftType = IInspectable
     public typealias CStruct = CWinRT.IInspectable
     public typealias CVTableStruct = CWinRT.IInspectableVtbl

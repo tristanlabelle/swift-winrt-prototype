@@ -7,7 +7,7 @@ public protocol IBufferProtocol: IInspectableProtocol {
 }
 public typealias IBuffer = any IBufferProtocol
 
-public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTImplementable {
+public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTTwoWayProjection {
     public typealias SwiftType = IBuffer
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBuffer
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBufferVtbl
@@ -37,7 +37,7 @@ public protocol IBufferByteAccessProtocol: IUnknownProtocol {
 }
 public typealias IBufferByteAccess = any IBufferByteAccessProtocol
 
-public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProjection>, COMImplementable {
+public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProjection>, COMTwoWayProjection {
     public typealias SwiftType = IBufferByteAccess
     public typealias CStruct = CWinRT.IBufferByteAccess
     public typealias CVTableStruct = CWinRT.IBufferByteAccessVtbl

@@ -1,6 +1,10 @@
 import CWinRT
 
 // Base class for COM objects projected into Swift.
+internal protocol COMObjectBase {
+    var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> { get }
+}
+
 open class COMObject<Projection: COMProjection>: IUnknownProtocol {
     public let _pointer: Projection.CPointer
     public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
@@ -11,18 +15,36 @@ open class COMObject<Projection: COMProjection>: IUnknownProtocol {
         (_unknown.pointee.lpVtbl.withMemoryRebound(to: Projection.CVTableStruct.self, capacity: 1) { $0 }).pointee
     }
 
-    public required init(pointer: Projection.CPointer) {
+    public required init(_wrapping pointer: Projection.CPointer) {
         self._pointer = pointer
         _ = self._unknown.pointee.lpVtbl.pointee.AddRef(_unknown)
     }
 
-    public static func toSwift(pointer: Projection.CPointer) -> Projection.SwiftType {
-        // TODO: Check for ISwiftObject first
-        Self(pointer: pointer) as! Projection.SwiftType
-    }
-
     deinit {
         _ = self._unknown.pointee.lpVtbl.pointee.Release(_unknown)
+    }
+
+    public static func _create(_ pointer: Projection.CPointer) -> Projection.SwiftType {
+        Self(_wrapping: pointer) as! Projection.SwiftType
+    }
+
+    public static func toSwift(_ pointer: Projection.CPointer) -> Projection.SwiftType {
+        // TODO: Check for ISwiftObject first
+        _create(pointer)
+    }
+
+    public static func asCOMWithRef(_ object: Projection.SwiftType) -> Projection.CPointer? {
+        guard let object = object as? (any COMObjectBase) else { return nil }
+        var iid = Projection.iid
+        var rawPointer: UnsafeMutableRawPointer?
+        let hr = object._unknown.pointee.lpVtbl.pointee.QueryInterface(object._unknown, &iid, &rawPointer)
+        guard let rawPointer else { return nil }
+        guard COMError.isSuccess(hr) else {
+            let unknown = rawPointer.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)
+            _ = unknown.pointee.lpVtbl.pointee.Release(unknown)
+            return nil
+        }
+        return rawPointer.bindMemory(to: Projection.CStruct.self, capacity: 1)
     }
 
     private func queryInterface<I: COMProjection>(_: I.Type, _ iid: CWinRT.IID) throws -> I.SwiftType? {
@@ -34,7 +56,7 @@ open class COMObject<Projection: COMProjection>: IUnknownProtocol {
         if hr == COMError.noInterface.hr { return nil }
         try COMError.throwIfFailed(hr)
         guard let rawPointer else { return nil }
-        return I.toSwift(pointer: rawPointer.bindMemory(to: I.CStruct.self, capacity: 1))
+        return I.toSwift(rawPointer.bindMemory(to: I.CStruct.self, capacity: 1))
     }
 
     public func queryInterface<I: COMProjection>(_ projection: I) throws -> I.SwiftType? {
