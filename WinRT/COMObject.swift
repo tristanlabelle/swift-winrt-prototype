@@ -57,6 +57,18 @@ open class COMObject<Projection: COMProjection>: IUnknownProtocol {
         try self.queryInterface(IUnknownProjection.self, iid)
     }
 
+    public func _getter<Value>(_ function: (Projection.CPointer, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
+        try withUnsafeTemporaryAllocation(of: Value.self, capacity: 1) { valueBuffer in
+            let valuePointer = valueBuffer.baseAddress!
+            try COMError.throwIfFailed(function(_pointer, valuePointer))
+            return valuePointer.pointee
+        }
+    }
+
+    public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {
+        try COMError.throwIfFailed(function(_pointer, value))
+    }
+
     public static func _getObject(_ pointer: Projection.CPointer?) -> Projection.SwiftType? {
         guard let pointer else { return nil }
         return pointer.withMemoryRebound(to: COMWrapper.self, capacity: 1) { $0.pointee.object }
@@ -64,6 +76,26 @@ open class COMObject<Projection: COMProjection>: IUnknownProtocol {
 
     public static func _getObject(_ pointer: Projection.CPointer) -> Projection.SwiftType {
         pointer.withMemoryRebound(to: COMWrapper.self, capacity: 1) { $0.pointee.object }
+    }
+
+    public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftType) throws -> Void) -> HRESULT {
+        guard let this else {
+            assertionFailure("COM this pointer was null")
+            return COMError.invalidArg.hr
+        }
+        return this.withMemoryRebound(to: COMWrapper.self, capacity: 1) { wrapper in
+            COMError.catch { try body(wrapper.pointee.object) }
+        }
+    }
+
+    public static func _getter<Value>(
+            _ this: Projection.CPointer?,
+            _ value: UnsafeMutablePointer<Value>?,
+            _ code: (Projection.SwiftType) throws -> Value) -> HRESULT {
+        _implement(this) {
+            guard let value else { throw COMError.invalidArg }
+            value.pointee = try code($0)
+        }
     }
 
     public static func _queryInterface(
