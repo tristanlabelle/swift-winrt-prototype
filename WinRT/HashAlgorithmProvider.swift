@@ -19,31 +19,34 @@ public final class CryptographicHash: WinRTObject<CryptographicHash>, WinRTProje
     public static var runtimeClassName: String { "Windows.Security.Cryptography.Core.CryptographicHash" }
 }
 
-// internal protocol IHashAlgorithmProviderProtocol: IUnknownProtocol {
-//     var algorithmName: String { get throws }
-//     var hashLength: UInt32 { get throws }
-//     func hashData(_ data: IBuffer!) throws -> IBuffer!
-//     func createHash() throws -> CryptographicHash!
-// }
-// internal typealias IHashAlgorithmProvider = any IHashAlgorithmProviderProtocol
+public final class HashAlgorithmProvider: WinRTObject<HashAlgorithmProvider>, WinRTProjection {
+    public typealias SwiftType = HashAlgorithmProvider
+    public typealias CStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProvider
+    public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderVtbl
+
+    public var algorithmName: String { get throws { HSTRING.toStringAndDelete(try _getter(_vtable.get_AlgorithmName)) } }
+    public var hashLength: UInt32 { get throws { try _getter(_vtable.get_HashLength) } }
+
+    public func hashData(_ data: IBuffer!) throws -> IBuffer! {
+        let data = IBufferProjection.toCOMWithRef(data)
+        defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
+        var value: IBufferProjection.CPointer?
+        try COMError.throwIfFailed(_vtable.HashData(_pointer, data, &value))
+        return IBufferProjection.toSwift(value)
+    }
+
+    public func createHash() throws -> CryptographicHash! {
+        CryptographicHash.toSwift(try _getter(_vtable.CreateHash))
+    }
+
+    public static let iid = IID(0xBE9B3080, 0xB2C3, 0x422B, 0xBCE1, 0xEC90EFB5D7B5)
+    public static var runtimeClassName: String { "Windows.Security.Cryptography.Core.HashAlgorithmProvider" }
+}
 
 // internal protocol IHashAlgorithmProviderStaticsProtocol: IUnknownProtocol {
 //     func openAlgorithm(_ algorithm: String) throws -> IHashAlgorithmProvider!
 // }
 // internal typealias IHashAlgorithmProviderStatics = any IHashAlgorithmProviderStaticsProtocol
-
-// public class HashAlgorithmProvider {
-//     private let impl: IHashAlgorithmProvider
-
-//     internal init(_ impl: IHashAlgorithmProvider) {
-//         self.impl = impl
-//     }
-
-//     public var algorithmName: String { get throws { try impl.algorithmName } }
-//     public var hashLength: UInt32 { get throws { try impl.hashLength } }
-//     public func hashData(_ data: IBuffer!) throws -> IBuffer! { try impl.hashData(data) }
-//     public func createHash() throws -> CryptographicHash! { try impl.createHash() }
-// }
 
 // extension HashAlgorithmProvider {
 //     private static var statics = Result { try getActivationFactory(IHashAlgorithmProviderStaticsProjection.self) }
