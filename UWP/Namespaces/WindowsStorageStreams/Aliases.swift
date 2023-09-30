@@ -2,4 +2,4 @@ import UWP
 
 public protocol IBufferProtocol: WindowsStorageStreams_IBufferProtocol {}
 public typealias IBuffer = WindowsStorageStreams_IBuffer
-public typealias IBufferPorjection = WindowsStorageStreams_IBufferProjection
+public typealias IBufferProjection = WindowsStorageStreams_IBufferProjection
