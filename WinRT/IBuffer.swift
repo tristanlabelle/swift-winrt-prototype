@@ -7,7 +7,7 @@ public protocol IBufferProtocol: IInspectableProtocol {
 }
 public typealias IBuffer = any IBufferProtocol
 
-public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTProjection {
+public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTImplementable {
     public typealias SwiftType = IBuffer
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBuffer
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBufferVtbl
@@ -18,8 +18,8 @@ public final class IBufferProjection: WinRTObject<IBufferProjection>, WinRTProje
 
     public static let iid = IID(0x905A0FE0, 0xBC53, 0x11DF, 0x8C49, 0x001E4FC686DA)
     public static var runtimeClassName: String { "Windows.Storage.Streams.IBuffer" }
-    public static var vtable: CVTablePointer { withUnsafePointer(to: &_vtable) { $0 } }
-    private static var _vtable: CVTableStruct = .init(
+    public static var _vtable: CVTablePointer { withUnsafePointer(to: &_vtableStruct) { $0 } }
+    private static var _vtableStruct: CVTableStruct = .init(
         QueryInterface: { this, iid, ppvObject in _queryInterface(this, iid, ppvObject) },
         AddRef: { this in _addRef(this) },
         Release: { this in _release(this) },
@@ -37,7 +37,7 @@ public protocol IBufferByteAccessProtocol: IUnknownProtocol {
 }
 public typealias IBufferByteAccess = any IBufferByteAccessProtocol
 
-public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProjection>, COMProjection {
+public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProjection>, COMImplementable {
     public typealias SwiftType = IBufferByteAccess
     public typealias CStruct = CWinRT.IBufferByteAccess
     public typealias CVTableStruct = CWinRT.IBufferByteAccessVtbl
@@ -45,8 +45,8 @@ public final class IBufferByteAccessProjection: COMObject<IBufferByteAccessProje
     public var capacity: UnsafeMutablePointer<UInt8>! { get throws { try _getter(_vtable.Buffer) } }
 
     public static let iid = IID(0x905A0FEF, 0xBC53, 0x11DF, 0x8C49, 0x001E4FC686DA)
-    public static var vtable: CVTablePointer { withUnsafePointer(to: &_vtable) { $0 } }
-    private static var _vtable: CVTableStruct = .init(
+    public static var _vtable: CVTablePointer { withUnsafePointer(to: &_vtableStruct) { $0 } }
+    private static var _vtableStruct: CVTableStruct = .init(
         QueryInterface: { this, iid, ppvObject in _queryInterface(this, iid, ppvObject) },
         AddRef: { this in _addRef(this) },
         Release: { this in _release(this) },

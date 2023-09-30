@@ -7,15 +7,15 @@ public protocol IInspectableProtocol: IUnknownProtocol {
 }
 public typealias IInspectable = any IInspectableProtocol
 
-public final class IInspectableProjection: WinRTObject<IInspectableProjection>, WinRTProjection {
+public final class IInspectableProjection: WinRTObject<IInspectableProjection>, WinRTImplementable {
     public typealias SwiftType = IInspectable
     public typealias CStruct = CWinRT.IInspectable
     public typealias CVTableStruct = CWinRT.IInspectableVtbl
 
     public static let iid = IID(0xAF86E2E0, 0xB12D, 0x4C6A, 0x9C5A, 0xD7AA65101E90)
     public static var runtimeClassName: String { "" }
-    public static var vtable: CVTablePointer { withUnsafePointer(to: &_vtable) { $0 } }
-    private static var _vtable: CVTableStruct = .init(
+    public static var _vtable: CVTablePointer { withUnsafePointer(to: &_vtableStruct) { $0 } }
+    private static var _vtableStruct: CVTableStruct = .init(
         QueryInterface: { this, iid, ppvObject in _queryInterface(this, iid, ppvObject) },
         AddRef: { this in _addRef(this) },
         Release: { this in _release(this) },
