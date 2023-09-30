@@ -37,7 +37,7 @@ extension COMObject where Projection: COMTwoWayProjection {
 
     public static func _queryInterface(
         _ this: Projection.CPointer?,
-        _ iid: UnsafePointer<CWinRT.IID>?,
+        _ iid: UnsafePointer<IID>?,
         _ ppvObject: UnsafeMutablePointer<UnsafeMutableRawPointer?>?) -> HRESULT {
 
         guard let this, let iid, let ppvObject else {

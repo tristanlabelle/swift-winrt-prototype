@@ -1,7 +1,7 @@
 import CWinRT
 
 public protocol IUnknownProtocol: AnyObject {
-    func queryInterface<Projection: COMProjection>(_ iid: CWinRT.IID, _: Projection.Type) throws -> Projection.SwiftType?
+    func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection.SwiftType?
 }
 public typealias IUnknown = any IUnknownProtocol
 
@@ -36,7 +36,7 @@ extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
         self.pointee.lpVtbl.pointee.Release(self)
     }
 
-    public func queryInterface<CStruct>(_ iid: CWinRT.IID, _ type: CStruct.Type) throws -> UnsafeMutablePointer<CStruct>? {
+    public func queryInterface<CStruct>(_ iid: IID, _ type: CStruct.Type) throws -> UnsafeMutablePointer<CStruct>? {
         var iid = iid
         var pointer: UnsafeMutableRawPointer?
         let hr = self.pointee.lpVtbl.pointee.QueryInterface(self, &iid, &pointer)
@@ -50,7 +50,7 @@ extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
         return pointer.bindMemory(to: CStruct.self, capacity: 1)
     }
 
-    public func queryInterface(_ iid: CWinRT.IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown>? {
+    public func queryInterface(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown>? {
         try self.queryInterface(iid, CWinRT.IUnknown.self)
     }
 }

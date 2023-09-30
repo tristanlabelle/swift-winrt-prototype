@@ -8,7 +8,7 @@ public protocol COMProjection: AnyObject {
     typealias CPointer = UnsafeMutablePointer<CStruct>
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
-    static var iid: CWinRT.IID { get }
+    static var iid: IID { get }
 
     static func _create(_ pointer: CPointer) -> SwiftType
     static func toSwift(_ pointer: CPointer) -> SwiftType
@@ -34,27 +34,14 @@ public protocol COMTwoWayProjection: COMProjection {
     static func toCOMWithRef(_ object: SwiftType) -> CPointer
 }
 
-// Protocol for strongly-typed WinRT interface/delegate/runtimeclass projections into Swift.
-public protocol WinRTProjection: COMProjection {
-    static var runtimeClassName: String { get }
+// Implemented by a Swift class that should be interoperable with COM.
+public protocol COMExport: IUnknownProtocol {
+    static var projections: [any COMTwoWayProjection.Type] { get }
 }
 
-// Protocol for strongly-typed two-way WinRT interface/delegate/runtimeclass projections into and from Swift.
-public protocol WinRTTwoWayProjection: WinRTProjection, COMTwoWayProjection {}
-
-protocol WinRTActivatableProjection: WinRTProjection {}
-
-extension WinRTActivatableProjection {
-    public static func _getActivationFactory<Factory: WinRTProjection>(_: Factory.Type) throws -> Factory.SwiftType {
-        let activatableId = try HSTRING.create(Self.runtimeClassName)
-        defer { HSTRING.delete(activatableId) }
-        var iid = Factory.iid
-        var factory: UnsafeMutableRawPointer?
-        let hr = CWinRT.RoGetActivationFactory(activatableId, &iid, &factory)
-        let unknown = factory?.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)
-        defer { _ = unknown?.pointee.lpVtbl.pointee.Release(unknown) }
-        try COMError.throwIfFailed(hr)
-        guard let factory else { throw COMError.noInterface }
-        return Factory.toSwift(factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
+extension COMExport {
+    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection.SwiftType? {
+        // Self.projections.first { $0.iid == iid }.map { $0.toCOMWithRef(self) }
+        fatalError()
     }
 }
