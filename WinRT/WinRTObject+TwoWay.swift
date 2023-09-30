@@ -28,7 +28,7 @@ extension WinRTObject where Projection: WinRTTwoWayProjection {
         guard let this, let className else { return COMError.invalidArg.hr }
         className.pointee = nil
         let object = _getObject(this) as! IInspectable
-        return COMError.catch { className.pointee = try HSTRING.allocate(object.getRuntimeClassName()) }
+        return COMError.catch { className.pointee = try HSTRING.create(object.getRuntimeClassName()) }
     }
 
     public static func _getTrustLevel(

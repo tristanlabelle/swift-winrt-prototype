@@ -1,5 +1,4 @@
 import CWinRT
-import struct Foundation.UUID
 
 // Protocol for strongly-typed COM interface projections into Swift.
 public protocol COMProjection: AnyObject {
@@ -36,6 +35,19 @@ public protocol WinRTProjection: COMProjection {
 // Protocol for strongly-typed two-way WinRT interface/delegate/runtimeclass projections into and from Swift.
 public protocol WinRTTwoWayProjection: WinRTProjection, COMTwoWayProjection {}
 
-protocol WinRTActivatableProjection: COMProjection {
-    static var activatableId: String { get }
+protocol WinRTActivatableProjection: WinRTProjection {}
+
+extension WinRTActivatableProjection {
+    public static func _getActivationFactory<Factory: WinRTProjection>(_: Factory.Type) throws -> Factory.SwiftType {
+        let activatableId = try HSTRING.create(Self.runtimeClassName)
+        defer { HSTRING.delete(activatableId) }
+        var iid = Self.iid
+        var factory: UnsafeMutableRawPointer?
+        let hr = CWinRT.RoGetActivationFactory(activatableId, &iid, &factory)
+        let unknown = factory?.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)
+        defer { _ = unknown?.pointee.lpVtbl.pointee.Release(unknown) }
+        try COMError.throwIfFailed(hr)
+        guard let factory else { throw COMError.noInterface }
+        return Factory.toSwift(factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
+    }
 }

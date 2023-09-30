@@ -18,7 +18,7 @@ open class WinRTObject<Projection: WinRTProjection>: COMObject<Projection>, IIns
     public func getRuntimeClassName() throws -> String {
         var className: HSTRING?
         let hr = _inspectable.pointee.lpVtbl.pointee.GetRuntimeClassName(_inspectable, &className)
-        defer { HSTRING.deleteOrAssert(className) }
+        defer { HSTRING.delete(className) }
         try COMError.throwIfFailed(hr)
         return className.toString()
     }

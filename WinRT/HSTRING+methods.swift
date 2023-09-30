@@ -1,7 +1,7 @@
 import CWinRT
 
 extension HSTRING {
-    public static func allocate(_ value: String) throws -> HSTRING? {
+    public static func create(_ value: String) throws -> HSTRING? {
         let chars = Array(value.utf16)
         return try chars.withUnsafeBufferPointer {
             var result: HSTRING?
@@ -10,14 +10,14 @@ extension HSTRING {
         }
     }
 
-    public static func deleteOrAssert(_ value: HSTRING?) {
+    public static func delete(_ value: HSTRING?) {
         let hr = CWinRT.WindowsDeleteString(value)
         assert(COMError.isSuccess(hr), "Failed to delete HSTRING")
     }
 
     public static func toStringAndDelete(_ value: HSTRING?) -> String {
         let result = value.toString()
-        deleteOrAssert(value)
+        delete(value)
         return result
     }
 }
@@ -32,6 +32,7 @@ extension Optional where Wrapped == HSTRING {
     public func toString() -> String {
         var length: UInt32 = 0
         guard let ptr = CWinRT.WindowsGetStringRawBuffer(self, &length) else { return "" }
-        return String(utf16CodeUnits: ptr, count: Int(length))
+        let buffer: UnsafeBufferPointer<UTF16.CodeUnit> = .init(start: ptr, count: Int(length))
+        return String(decoding: buffer, as: UTF16.self)
     }
 }
