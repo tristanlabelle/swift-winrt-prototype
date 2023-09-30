@@ -36,16 +36,16 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
         return try? object._unknown.queryInterface(Projection.iid, Projection.CStruct.self)
     }
 
-    private func queryInterface<I: COMProjection>(_: I.Type, _ iid: CWinRT.IID) throws -> I.SwiftType? {
+    private func queryInterface<I: COMProjection>(_ iid: CWinRT.IID, _: I.Type) throws -> I.SwiftType? {
         return I.toSwift(try self._unknown.queryInterface(iid, I.CStruct.self))
     }
 
     public func queryInterface<I: COMProjection>(_ projection: I) throws -> I.SwiftType? {
-        try self.queryInterface(I.self, I.iid)
+        try self.queryInterface(I.iid, I.self)
     }
 
     public func queryInterface(_ iid: CWinRT.IID) throws -> IUnknown? {
-        try self.queryInterface(IUnknownProjection.self, iid)
+        try self.queryInterface(iid, IUnknownProjection.self)
     }
 
     public func _getter<Value>(_ function: (Projection.CPointer, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
@@ -54,6 +54,18 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
             try COMError.throwIfFailed(function(_pointer, valuePointer))
             return valuePointer.pointee
         }
+    }
+
+    public func _stringGetter(_ function: (Projection.CPointer, UnsafeMutablePointer<CWinRT.HSTRING?>?) -> HRESULT) throws -> String {
+        HSTRING.toStringAndDelete(try _getter(function))
+    }
+
+    public func _objectGetter<ValueProjection: COMProjection>(
+            _ function: (Projection.CPointer, UnsafeMutablePointer<ValueProjection.CPointer?>?) -> HRESULT,
+            _: ValueProjection.Type) throws -> ValueProjection.SwiftType! {
+        guard let pointer = try _getter(function) else { return nil }
+        defer { _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
+        return ValueProjection.toSwift(pointer)
     }
 
     public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {

@@ -15,7 +15,7 @@ public final class CryptographicHash: WinRTObject<CryptographicHash>, WinRTProje
     }
 
     public func getValueAndReset() throws -> IBuffer! {
-        IBufferProjection.toSwift(try _getter(_vtable.GetValueAndReset))
+        try _objectGetter(_vtable.GetValueAndReset, IBufferProjection.self)
     }
 }
 
@@ -27,7 +27,7 @@ public final class HashAlgorithmProvider: WinRTObject<HashAlgorithmProvider>, Wi
     public static let iid = IID(0xBE9B3080, 0xB2C3, 0x422B, 0xBCE1, 0xEC90EFB5D7B5)
     public static var runtimeClassName: String { "Windows.Security.Cryptography.Core.HashAlgorithmProvider" }
 
-    public var algorithmName: String { get throws { HSTRING.toStringAndDelete(try _getter(_vtable.get_AlgorithmName)) } }
+    public var algorithmName: String { get throws { try _stringGetter(_vtable.get_AlgorithmName) } }
     public var hashLength: UInt32 { get throws { try _getter(_vtable.get_HashLength) } }
 
     public func hashData(_ data: IBuffer!) throws -> IBuffer! {

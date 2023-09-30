@@ -1,9 +1,28 @@
 import CWinRT
 
 public protocol IUnknownProtocol: AnyObject {
+    // TODO: func queryInterface<I: COMProjection>(_ iid: CWinRT.IID, _: I.Type) throws -> I.SwiftType?
     func queryInterface(_ iid: CWinRT.IID) throws -> IUnknown?
 }
 public typealias IUnknown = any IUnknownProtocol
+
+extension IUnknownProtocol {
+    public func queryInterface<Projection: COMProjection>(_: Projection.Type) throws -> Projection.SwiftType? {
+        guard let object = try self.queryInterface(Projection.iid) else { return nil }
+
+        if let object = object as? Projection.SwiftType { return object }
+
+        // Might need to promote a COMObject<IUnknown> to a COMObject<Projection>
+        if let pointer = IUnknownProjection.asCOMWithRef(object) {
+            defer { pointer.release() }
+            return pointer.withMemoryRebound(to: Projection.CStruct.self, capacity: 1) {
+                Projection._create($0)
+            }
+        }
+
+        fatalError()
+    }
+}
 
 public final class IUnknownProjection: COMObject<IUnknownProjection>, COMTwoWayProjection {
     public typealias SwiftType = IUnknown
