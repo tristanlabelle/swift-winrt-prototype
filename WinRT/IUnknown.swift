@@ -18,3 +18,33 @@ public final class IUnknownProjection: COMObject<IUnknownProjection>, COMTwoWayP
         Release: { this in _release(this) }
     )
 }
+
+extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
+    @discardableResult
+    public func addRef() -> UInt32 {
+        self.pointee.lpVtbl.pointee.AddRef(self)
+    }
+
+    @discardableResult
+    public func release() -> UInt32 {
+        self.pointee.lpVtbl.pointee.Release(self)
+    }
+
+    public func queryInterface<CStruct>(_ iid: CWinRT.IID, _ type: CStruct.Type) throws -> UnsafeMutablePointer<CStruct>? {
+        var iid = iid
+        var pointer: UnsafeMutableRawPointer?
+        let hr = self.pointee.lpVtbl.pointee.QueryInterface(self, &iid, &pointer)
+        guard let pointer else {
+            if hr == COMError.noInterface.hr { return nil }
+            try COMError.throwIfFailed(hr)
+            assertionFailure("QueryInterface succeeded but returned a null pointer")
+            return nil
+        }
+
+        return pointer.bindMemory(to: CStruct.self, capacity: 1)
+    }
+
+    public func queryInterface(_ iid: CWinRT.IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown>? {
+        try self.queryInterface(iid, CWinRT.IUnknown.self)
+    }
+}

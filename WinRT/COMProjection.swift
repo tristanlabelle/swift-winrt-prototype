@@ -16,6 +16,11 @@ public protocol COMProjection: AnyObject {
 }
 
 extension COMProjection {
+    public static func toSwift(_ pointer: CPointer) -> SwiftType {
+        // TODO: Check for ISwiftObject first
+        _create(pointer)
+    }
+
     public static func toSwift(_ pointer: CPointer?) -> SwiftType? {
         guard let pointer = pointer else { return nil }
         return toSwift(pointer)
@@ -25,6 +30,8 @@ extension COMProjection {
 // Protocol for strongly-typed two-way COM interface projections into and from Swift.
 public protocol COMTwoWayProjection: COMProjection {
     static var _vtable: CVTablePointer { get }
+
+    static func toCOMWithRef(_ object: SwiftType) -> CPointer
 }
 
 // Protocol for strongly-typed WinRT interface/delegate/runtimeclass projections into Swift.
@@ -41,7 +48,7 @@ extension WinRTActivatableProjection {
     public static func _getActivationFactory<Factory: WinRTProjection>(_: Factory.Type) throws -> Factory.SwiftType {
         let activatableId = try HSTRING.create(Self.runtimeClassName)
         defer { HSTRING.delete(activatableId) }
-        var iid = Self.iid
+        var iid = Factory.iid
         var factory: UnsafeMutableRawPointer?
         let hr = CWinRT.RoGetActivationFactory(activatableId, &iid, &factory)
         let unknown = factory?.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)

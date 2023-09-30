@@ -3,6 +3,7 @@ import CWinRT
 public struct COMError: Error {
     public static let fail = COMError(hr: HRESULT(bitPattern: 0x80004005))
     public static let invalidArg = COMError(hr: HRESULT(bitPattern: 0x80070057))
+    public static let notImpl = COMError(hr: HRESULT(bitPattern: 0x80004001))
     public static let noInterface = COMError(hr: HRESULT(bitPattern: 0x80004002))
     public static let outOfMemory = COMError(hr: HRESULT(bitPattern: 0x8007000E))
 
