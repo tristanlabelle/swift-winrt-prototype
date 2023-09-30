@@ -46,17 +46,23 @@ extension COMObject where Projection: COMTwoWayProjection {
         }
 
         return this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { wrapper -> HRESULT in
-            switch iid.pointee {
-                case IUnknownProjection.iid, Projection.iid:
-                    ppvObject.pointee = UnsafeMutableRawPointer(this)
-                    wrapper.pointee.addRef()
-                    return 0
+            let iid = iid.pointee
+            if iid == IUnknownProjection.iid || iid == Projection.iid
+                || (iid == IInspectableProjection.iid && Projection.self is (any WinRTProjection).Type) {
 
-                // TODO: IInspectable
+                ppvObject.pointee = UnsafeMutableRawPointer(this)
+                wrapper.pointee.addRef()
+                return 0
+            }
 
-                default:
-                    let wrapper = this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { $0 }
-                    fatalError()
+            let wrapper = this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { $0 }
+            ppvObject.pointee = nil
+            return COMError.catch {
+                let unknown = wrapper.pointee.object as! IUnknown
+                if let swiftResult = try unknown.queryInterface(iid, IUnknownProjection.self) {
+                    let comResult = IUnknownProjection.toCOMWithRef(swiftResult)
+                    ppvObject.pointee = UnsafeMutableRawPointer(comResult)
+                }
             }
         }
     }

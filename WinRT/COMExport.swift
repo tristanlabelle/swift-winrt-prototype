@@ -6,7 +6,7 @@ public protocol COMExport: IUnknownProtocol {
 }
 
 extension COMExport {
-    public func queryInterface(_ iid: CWinRT.IID) throws -> IUnknown? {
+    public func queryInterface<Projection: COMProjection>(_ iid: CWinRT.IID, _: Projection.Type) throws -> Projection.SwiftType? {
         // Self.projections.first { $0.iid == iid }.map { $0.toCOMWithRef(self) }
         fatalError()
     }
