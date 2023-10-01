@@ -59,10 +59,9 @@ extension COMObject where Projection: COMTwoWayProjection {
             ppvObject.pointee = nil
             return COMError.catch {
                 let unknown = wrapper.pointee.object as! IUnknown
-                if let swiftResult = try unknown.queryInterface(iid, IUnknownProjection.self) {
-                    let comResult = IUnknownProjection.toCOMWithRef(swiftResult)
-                    ppvObject.pointee = UnsafeMutableRawPointer(comResult)
-                }
+                let swiftResult = try unknown.queryInterface(iid, IUnknownProjection.self)
+                let comResult = IUnknownProjection.toCOMWithRef(swiftResult)
+                ppvObject.pointee = UnsafeMutableRawPointer(comResult)
             }
         }
     }

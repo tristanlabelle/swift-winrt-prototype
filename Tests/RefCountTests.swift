@@ -8,7 +8,7 @@ internal final class RefCountTests: WinRTTestCase {
         try XCTSkipIf(true, "queryInterface on COMExport is not implemented yet")
         let swiftObject = SwiftBuffer([1, 2, 3])
         XCTAssertEqual(COMObjectBase._getUnsafeRefCount(swiftObject), 0)
-        let comObject = try NullResult.unwrap(swiftObject.queryInterface(IBufferProjection.self))
+        let comObject = try swiftObject.queryInterface(IBufferProjection.self)
         XCTAssertEqual(COMObjectBase._getUnsafeRefCount(comObject), 1)
     }
 

@@ -49,8 +49,8 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
         return try? object._unknown.queryInterface(Projection.iid, Projection.CStruct.self)
     }
 
-    public func queryInterface<I: COMProjection>(_ iid: IID, _: I.Type) throws -> I.SwiftType? {
-        guard let pointer = try self._unknown.queryInterface(iid, I.CStruct.self) else { return nil }
+    public func queryInterface<I: COMProjection>(_ iid: IID, _: I.Type) throws -> I.SwiftType {
+        let pointer = try self._unknown.queryInterface(iid, I.CStruct.self)
         defer { _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
         return I.toSwift(pointer)
     }

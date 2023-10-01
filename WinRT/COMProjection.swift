@@ -40,8 +40,8 @@ public protocol COMExport: IUnknownProtocol {
 }
 
 extension COMExport {
-    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection.SwiftType? {
+    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection.SwiftType {
         // Self.projections.first { $0.iid == iid }.map { $0.toCOMWithRef(self) }
-        fatalError()
+        throw COMError.noInterface
     }
 }
