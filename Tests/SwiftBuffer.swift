@@ -1,7 +1,7 @@
 import WinRT
 import UWP_WindowsStorageStreams
 
-final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol {
+internal final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol {
     let bufferPointer: UnsafeMutableBufferPointer<UInt8>
 
     init(_ array: [UInt8]) {

@@ -2,6 +2,19 @@ import CWinRT
 
 open class COMObjectBase {
     public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> { fatalError() }
+
+    public var _unsafeRefCount: UInt32 {
+        let postAddRef = _unknown.pointee.lpVtbl.pointee.AddRef(_unknown)
+        let postRelease = _unknown.pointee.lpVtbl.pointee.Release(_unknown)
+        assert(postRelease + 1 == postAddRef,
+            "Unexpected ref count change during _unsafeRefCount")
+        return postRelease
+    }
+
+    public static func _getUnsafeRefCount(_ object: IUnknown) -> UInt32 {
+        guard let object = object as? COMObjectBase else { return 0 }
+        return object._unsafeRefCount
+    }
 }
 
 // Base class for COM objects projected into Swift.

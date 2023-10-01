@@ -26,13 +26,12 @@ let package = Package(
             name: "UWP_WindowsStorageStreams",
             dependencies: ["UWP"],
             path: "UWP/Namespaces/WindowsStorageStreams"),
-        .executableTarget(
-            name: "App",
+        .testTarget(
+            name: "Tests",
             dependencies: [
                 "WinRT",
-                "UWP",
                 "UWP_WindowsSecurityCryptographyCore",
                 "UWP_WindowsStorageStreams"],
-            path: "App")
+            path: "Tests")
     ]
 )
