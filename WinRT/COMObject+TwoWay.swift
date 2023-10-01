@@ -1,8 +1,8 @@
 import CWinRT
 
 extension COMObject where Projection: COMTwoWayProjection {
-    public static func toCOMWithRef(_ object: Projection.SwiftType) -> Projection.CPointer {
-        if let pointer = Projection.asCOMWithRef(object) { return pointer }
+    public static func toCOMPointerWithRef(_ object: Projection.SwiftType) -> Projection.CPointer {
+        if let pointer = Projection.asCOMPointerWithRef(object) { return pointer }
         return COMWrapper<Projection>.allocate(object: object, vtable: Projection._vtable)
     }
 
@@ -60,7 +60,7 @@ extension COMObject where Projection: COMTwoWayProjection {
             return COMError.catch {
                 let unknown = wrapper.pointee.object as! IUnknown
                 let swiftResult = try unknown.queryInterface(iid, IUnknownProjection.self)
-                let comResult = IUnknownProjection.toCOMWithRef(swiftResult)
+                let comResult = IUnknownProjection.toCOMPointerWithRef(swiftResult)
                 ppvObject.pointee = UnsafeMutableRawPointer(comResult)
             }
         }

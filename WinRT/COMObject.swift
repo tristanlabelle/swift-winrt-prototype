@@ -28,10 +28,8 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
         (_unknown.pointee.lpVtbl.withMemoryRebound(to: Projection.CVTableStruct.self, capacity: 1) { $0 }).pointee
     }
 
-    public required init(_wrapping pointer: Projection.CPointer) {
+    public required init(_consumingRef pointer: Projection.CPointer) {
         self._pointer = pointer
-        _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.addRef() }
-
         super.init()
         assert(self is Projection.SwiftType, "COMObject subclass must be convertible to its SwiftType")
     }
@@ -40,11 +38,11 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
         _ = self._unknown.pointee.lpVtbl.pointee.Release(_unknown)
     }
 
-    public class func _create(_ pointer: Projection.CPointer) -> Projection.SwiftType {
-        Self(_wrapping: pointer) as! Projection.SwiftType
+    public class func _create(consumingRef pointer: Projection.CPointer) -> Projection.SwiftType {
+        Self(_consumingRef: pointer) as! Projection.SwiftType
     }
 
-    public static func asCOMWithRef(_ object: Projection.SwiftType) -> Projection.CPointer? {
+    public static func asCOMPointerWithRef(_ object: Projection.SwiftType) -> Projection.CPointer? {
         guard let object = object as? COMObjectBase else { return nil }
         return try? object._unknown.queryInterface(Projection.iid, Projection.CStruct.self)
     }

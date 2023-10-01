@@ -11,7 +11,7 @@ public final class WindowsSecurityCryptographyCore_CryptographicHash:
     public static var runtimeClassName: String { "Windows.Security.Cryptography.Core.CryptographicHash" }
 
     public func append(_ data: WindowsStorageStreams_IBuffer!) throws {
-        let data = WindowsStorageStreams_IBufferProjection.toCOMWithRef(data)
+        let data = WindowsStorageStreams_IBufferProjection.toCOMPointerWithRef(data)
         defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
         try COMError.throwIfFailed(_vtable.Append(_pointer, data))
     }
@@ -34,7 +34,7 @@ public final class WindowsSecurityCryptographyCore_HashAlgorithmProvider:
     public var hashLength: UInt32 { get throws { try _getter(_vtable.get_HashLength) } }
 
     public func hashData(_ data: WindowsStorageStreams_IBuffer!) throws -> WindowsStorageStreams_IBuffer {
-        let data = WindowsStorageStreams_IBufferProjection.toCOMWithRef(data)
+        let data = WindowsStorageStreams_IBufferProjection.toCOMPointerWithRef(data)
         defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
         var value: WindowsStorageStreams_IBufferProjection.CPointer?
         try COMError.throwIfFailed(_vtable.HashData(_pointer, data, &value))
