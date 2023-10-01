@@ -4,35 +4,37 @@ import UWP_WindowsStorageStreams
 import WinRT
 
 internal final class RefCountTests: WinRTTestCase {
-    func testAfterQueryInterfaceOfSwiftObject() throws {
-        // CFGetRetainCount does not exist on Windows
-
-        let swiftObject = SwiftBuffer([1, 2, 3])
-        // XCTAssertEqual(CFGetRetainCount(swiftObject), 1)
-        XCTAssertEqual(COMObjectBase._getUnsafeRefCount(swiftObject), 0)
+    func testQueryInterfaceOfSwiftObject() throws {
+        let swiftBuffer = SwiftBuffer([1, 2, 3])
+        XCTAssertEqual(COMObjectBase._getUnsafeRefCount(swiftBuffer), 0)
 
         do {
-            let comObject1 = try swiftObject.queryInterface(IBufferProjection.self)
-            // XCTAssertEqual(CFGetRetainCount(swiftObject), 2)
-            XCTAssertEqual(COMObjectBase._getUnsafeRefCount(comObject1), 1)
+            let buffer = try swiftBuffer.queryInterface(IBufferProjection.self)
+            XCTAssertEqual(COMObjectBase._getUnsafeRefCount(buffer), 1)
 
             do {
-                let comObject2 = try swiftObject.queryInterface(IBufferByteAccessProjection.self)
-                // XCTAssertEqual(CFGetRetainCount(swiftObject), 3)
-                XCTAssertEqual(COMObjectBase._getUnsafeRefCount(comObject1), 1)
-                XCTAssertEqual(COMObjectBase._getUnsafeRefCount(comObject2), 1)
+                let bufferByteAccess = try swiftBuffer.queryInterface(IBufferByteAccessProjection.self)
+                XCTAssertEqual(COMObjectBase._getUnsafeRefCount(buffer), 1)
+                XCTAssertEqual(COMObjectBase._getUnsafeRefCount(bufferByteAccess), 1)
             }
 
-            // XCTAssertEqual(CFGetRetainCount(swiftObject), 2)
-            XCTAssertEqual(COMObjectBase._getUnsafeRefCount(comObject1), 1)
+            XCTAssertEqual(COMObjectBase._getUnsafeRefCount(buffer), 1)
         }
-
-        // XCTAssertEqual(CFGetRetainCount(swiftObject), 1)
     }
 
-    func testWinRTObject() throws {
-        try XCTSkipIf(true, "HashAlgorithmProvider.openAlgorithm might be cached")
-        let comObject = try HashAlgorithmProvider.openAlgorithm("SHA256")
-        XCTAssertEqual(COMObjectBase._getUnsafeRefCount(comObject), 1)
+    func testQueryInterfaceOfWinRTObject() throws {
+        // HashAlgorithmProvider instances from openAlgorithm could be cached, 
+        // but it wouldn't make sense for IBuffer instances
+        let buffer = try HashAlgorithmProvider.openAlgorithm("SHA256").createHash().getValueAndReset()
+        XCTAssertEqual(COMObjectBase._getUnsafeRefCount(buffer), 1)
+
+        do {
+            // Assume that the different COM interfaces share the same refcount
+            let bufferByteAccess = try buffer.queryInterface(IBufferByteAccessProjection.self)
+            XCTAssertEqual(COMObjectBase._getUnsafeRefCount(buffer), 2)
+            XCTAssertEqual(COMObjectBase._getUnsafeRefCount(bufferByteAccess), 2)
+        }
+
+        XCTAssertEqual(COMObjectBase._getUnsafeRefCount(buffer), 1)
     }
 }
