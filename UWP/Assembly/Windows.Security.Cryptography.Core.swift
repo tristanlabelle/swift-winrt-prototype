@@ -16,7 +16,7 @@ public final class WindowsSecurityCryptographyCore_CryptographicHash:
         try COMError.throwIfFailed(_vtable.Append(_pointer, data))
     }
 
-    public func getValueAndReset() throws -> WindowsStorageStreams_IBuffer! {
+    public func getValueAndReset() throws -> WindowsStorageStreams_IBuffer {
         try _objectGetter(_vtable.GetValueAndReset, WindowsStorageStreams_IBufferProjection.self)
     }
 }
@@ -33,15 +33,15 @@ public final class WindowsSecurityCryptographyCore_HashAlgorithmProvider:
     public var algorithmName: String { get throws { try _stringGetter(_vtable.get_AlgorithmName) } }
     public var hashLength: UInt32 { get throws { try _getter(_vtable.get_HashLength) } }
 
-    public func hashData(_ data: WindowsStorageStreams_IBuffer!) throws -> WindowsStorageStreams_IBuffer! {
+    public func hashData(_ data: WindowsStorageStreams_IBuffer!) throws -> WindowsStorageStreams_IBuffer {
         let data = WindowsStorageStreams_IBufferProjection.toCOMWithRef(data)
         defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
         var value: WindowsStorageStreams_IBufferProjection.CPointer?
         try COMError.throwIfFailed(_vtable.HashData(_pointer, data, &value))
-        return WindowsStorageStreams_IBufferProjection.toSwift(value)
+        return try NullResult.unwrap(WindowsStorageStreams_IBufferProjection.toSwift(value))
     }
 
-    public func createHash() throws -> WindowsSecurityCryptographyCore_CryptographicHash! {
+    public func createHash() throws -> WindowsSecurityCryptographyCore_CryptographicHash {
         try _objectGetter(_vtable.CreateHash, WindowsSecurityCryptographyCore_CryptographicHash.self)
     }
 }
@@ -49,7 +49,7 @@ public final class WindowsSecurityCryptographyCore_HashAlgorithmProvider:
 extension WindowsSecurityCryptographyCore_HashAlgorithmProvider {
     private static var statics = Result { try _getActivationFactory(WindowsSecurityCryptographyCore_HashAlgorithmProviderStatics.self) }
 
-    public static func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider! {
+    public static func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider {
         try statics.get().openAlgorithm(algorithm)
     }
 }
@@ -60,12 +60,12 @@ fileprivate final class WindowsSecurityCryptographyCore_HashAlgorithmProviderSta
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderStatics
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderStaticsVtbl
 
-    public func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider! {
+    public func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider {
         let algorithm = try HSTRING.create(algorithm)
         defer { HSTRING.delete(algorithm) }
         var value: WindowsSecurityCryptographyCore_HashAlgorithmProvider.CPointer?
         try COMError.throwIfFailed(_vtable.OpenAlgorithm(_pointer, algorithm, &value))
-        return WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(value)
+        return try NullResult.unwrap(WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(value))
     }
 
     public static let iid = IID(0x9FAC9741, 0x5CC4, 0x4336, 0xAE38, 0x6212B75A915A)

@@ -1,7 +1,7 @@
 import CWinRT
 
 public protocol IBufferByteAccessProtocol: IUnknownProtocol {
-    var buffer: UnsafeMutablePointer<UInt8>! { get throws }
+    var buffer: UnsafeMutablePointer<UInt8> { get throws }
 }
 public typealias IBufferByteAccess = any IBufferByteAccessProtocol
 
@@ -20,5 +20,5 @@ public final class IBufferByteAccessProjection:
         Buffer: { this, value in _getter(this, value) { try $0.buffer } }
     )
 
-    public var buffer: UnsafeMutablePointer<UInt8>! { get throws { try _getter(_vtable.Buffer) } }
+    public var buffer: UnsafeMutablePointer<UInt8> { get throws { try NullResult.unwrap(_getter(_vtable.Buffer)) } }
 }

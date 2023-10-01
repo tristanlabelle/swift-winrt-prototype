@@ -69,8 +69,8 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
 
     public func _objectGetter<ValueProjection: COMProjection>(
             _ function: (Projection.CPointer, UnsafeMutablePointer<ValueProjection.CPointer?>?) -> HRESULT,
-            _: ValueProjection.Type) throws -> ValueProjection.SwiftType! {
-        guard let pointer = try _getter(function) else { return nil }
+            _: ValueProjection.Type) throws -> ValueProjection.SwiftType {
+        guard let pointer = try _getter(function) else { throw NullResult() }
         defer { _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
         return ValueProjection.toSwift(pointer)
     }
