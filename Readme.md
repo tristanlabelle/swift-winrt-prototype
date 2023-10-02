@@ -26,6 +26,24 @@ One Swift module is declared for each namespace of an assembly module to provide
 **Example**: `import UWP_WindowsStorageStreams`
 
 ## Type Projections
+## Enums as structs
+WinRT enums are projected as `Hashable` structs wrapping an Int32 value, instead of as enums. These structs implement `OptionSet` if the underlying enum has the `[Flags]` attribute.
+
+**Rationale**: WinRT does not enforce that instances of enum types have a value that matches one of the enumerants.
+
+**Example**:
+```swift
+public struct AsyncStatus: Hashable {
+    public var value: Int32
+    public init(_ value: Int32 = 0) { self.value = value }
+
+    public static let started = Self(0)
+    public static let completed = Self(1)
+    public static let canceled = Self(2)
+    public static let error = Self(3)
+}
+```
+
 ### IFoo and IFooProtocol naming
 Swift protocols generated for COM/WinRT interfaces have a "Protocol" suffix. The unsuffixed interface name is used for its existential typealias.
 
@@ -36,6 +54,18 @@ Swift protocols generated for COM/WinRT interfaces have a "Protocol" suffix. The
 **Example**: `class CustomVector: IVectorProtocol { func getView() throws -> IVectorView }`
 
 ## Members
+### Property setters as functions
+Property setters are exposed as functions taking a new value argument and returning `Void`, instead of as property setters.
+
+**Rationale**: Swift does not support throwing property setters, and we don't want to ignore or failfast on exceptions. WinRT should not overload properties to methods whereas Swift can, so this is safe.
+
+**Example**:
+```swift 
+// In IAsyncAction
+var completed: AsyncActionCompletedHandler { get throws }
+func completed(_ value: AsyncActionCompletedHandler!) throws
+```
+
 ### Nullability via thrown errors
 `null` return values from WinRT methods and properties of reference types are surfaced by throwing a `NullResult` error instead of marking the Swift type as optional.
 
