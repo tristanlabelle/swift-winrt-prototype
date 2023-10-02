@@ -1,5 +1,7 @@
 import CWinRT
 
+public typealias HRESULT = CWinRT.HRESULT
+
 public struct COMError: Error {
     public static let fail = COMError(hr: HRESULT(bitPattern: 0x80004005))
     public static let invalidArg = COMError(hr: HRESULT(bitPattern: 0x80070057))
