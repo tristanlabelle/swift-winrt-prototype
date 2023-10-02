@@ -13,6 +13,7 @@ public protocol COMProjection: AnyObject {
     static func _create(consumingRef pointer: CPointer) -> SwiftType
     static func toSwift(consumingRef pointer: CPointer) -> SwiftType
     static func asCOMPointerWithRef(_ object: SwiftType) -> CPointer?
+    static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer?
     static func toCOMObject(_ object: SwiftType) -> SwiftType?
 }
 
@@ -42,25 +43,24 @@ extension COMProjection {
         return toSwift(pointer)
     }
 
+    public static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer? {
+        // WinRTTwoWayProjection overrides this
+        asCOMPointerWithRef(object)
+    }
+
     public static func toCOMObject(_ object: SwiftType) -> SwiftType? {
-        object is COMObjectBase ? Optional(object) : nil
+        if object is COMObjectBase { return object }
+        guard let pointer = toCOMPointerWithRef(object) else { return nil }
+        return _create(consumingRef: pointer)
     }
 }
 
 // Protocol for strongly-typed two-way COM interface projections into and from Swift.
 public protocol COMTwoWayProjection: COMProjection {
     static var _vtable: CVTablePointer { get }
-
-    static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer
 }
 
 extension COMTwoWayProjection {
-    public static func toCOMObject(_ object: SwiftType) -> SwiftType? {
-        if object is COMObjectBase { return object }
-        let pointer = toCOMPointerWithRef(object)
-        return _create(consumingRef: pointer)
-    }
-
     public static func toCOMUnknown(_ object: IUnknown) -> IUnknown {
         toCOMObject(object as! SwiftType) as! IUnknown
     }

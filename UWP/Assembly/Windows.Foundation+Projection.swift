@@ -5,6 +5,8 @@ extension WindowsFoundation_AsyncStatus: WinRTEnum {
     public typealias CEnum = CWinRT.AsyncStatus
 }
 
+public enum WindowsFoundation_AsyncOperationCompletedHandlerProjection<TResult> {}
+
 public final class WindowsFoundation_IAsyncInfoProjection:
         WinRTObject<WindowsFoundation_IAsyncInfoProjection>, WinRTProjection, WindowsFoundation_IAsyncInfoProtocol {
     public typealias SwiftType = WindowsFoundation_IAsyncInfo

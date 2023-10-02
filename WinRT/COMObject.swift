@@ -52,32 +52,4 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
         defer { _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
         return I.toSwift(pointer)
     }
-
-    public func _getter<Value>(_ function: (Projection.CPointer, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
-        try withUnsafeTemporaryAllocation(of: Value.self, capacity: 1) { valueBuffer in
-            let valuePointer = valueBuffer.baseAddress!
-            try COMError.throwIfFailed(function(_pointer, valuePointer))
-            return valuePointer.pointee
-        }
-    }
-
-    public func _enumGetter<Enum: WinRTEnum>(_ function: (Projection.CPointer, UnsafeMutablePointer<Enum.CEnum>?) -> HRESULT) throws -> Enum {
-        Enum(try _getter(function))
-    }
-
-    public func _stringGetter(_ function: (Projection.CPointer, UnsafeMutablePointer<CWinRT.HSTRING?>?) -> HRESULT) throws -> String {
-        HSTRING.toStringAndDelete(try _getter(function))
-    }
-
-    public func _objectGetter<ValueProjection: COMProjection>(
-            _ function: (Projection.CPointer, UnsafeMutablePointer<ValueProjection.CPointer?>?) -> HRESULT,
-            _: ValueProjection.Type) throws -> ValueProjection.SwiftType {
-        guard let pointer = try _getter(function) else { throw NullResult() }
-        defer { _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
-        return ValueProjection.toSwift(pointer)
-    }
-
-    public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {
-        try COMError.throwIfFailed(function(_pointer, value))
-    }
 }
