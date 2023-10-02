@@ -22,7 +22,7 @@ public final class WindowsSecurityCryptographyCore_CryptographicHash:
 }
 
 public final class WindowsSecurityCryptographyCore_HashAlgorithmProvider:
-        WinRTObject<WindowsSecurityCryptographyCore_HashAlgorithmProvider>, WinRTActivatableProjection {
+        WinRTObject<WindowsSecurityCryptographyCore_HashAlgorithmProvider>, WinRTProjection {
     public typealias SwiftType = WindowsSecurityCryptographyCore_HashAlgorithmProvider
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProvider
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderVtbl

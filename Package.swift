@@ -19,6 +19,10 @@ let package = Package(
             dependencies: ["CWinRT", "WinRT"],
             path: "UWP/Assembly"),
         .target(
+            name: "UWP_WindowsFoundation",
+            dependencies: ["UWP"],
+            path: "UWP/Namespaces/WindowsFoundation"),
+        .target(
             name: "UWP_WindowsSecurityCryptographyCore",
             dependencies: ["UWP"],
             path: "UWP/Namespaces/WindowsSecurityCryptographyCore"),
@@ -30,6 +34,7 @@ let package = Package(
             name: "Tests",
             dependencies: [
                 "WinRT",
+                "UWP_WindowsFoundation",
                 "UWP_WindowsSecurityCryptographyCore",
                 "UWP_WindowsStorageStreams"],
             path: "Tests")

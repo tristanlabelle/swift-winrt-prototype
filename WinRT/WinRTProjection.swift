@@ -8,10 +8,7 @@ public protocol WinRTProjection: COMProjection {
 // Protocol for strongly-typed two-way WinRT interface/delegate/runtimeclass projections into and from Swift.
 public protocol WinRTTwoWayProjection: WinRTProjection, COMTwoWayProjection {}
 
-// Protocol for strongly-typed activatable WinRT runtimeclass projections into Swift.
-public protocol WinRTActivatableProjection: WinRTProjection {}
-
-extension WinRTActivatableProjection {
+extension WinRTProjection {
     public static func _getActivationFactory<Factory: WinRTProjection>(_: Factory.Type) throws -> Factory.SwiftType {
         let activatableId = try HSTRING.create(Self.runtimeClassName)
         defer { HSTRING.delete(activatableId) }

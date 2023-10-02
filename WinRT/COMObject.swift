@@ -61,6 +61,10 @@ open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol
         }
     }
 
+    public func _enumGetter<Enum: WinRTEnum>(_ function: (Projection.CPointer, UnsafeMutablePointer<Enum.CEnum>?) -> HRESULT) throws -> Enum {
+        Enum(try _getter(function))
+    }
+
     public func _stringGetter(_ function: (Projection.CPointer, UnsafeMutablePointer<CWinRT.HSTRING?>?) -> HRESULT) throws -> String {
         HSTRING.toStringAndDelete(try _getter(function))
     }
