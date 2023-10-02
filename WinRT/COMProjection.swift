@@ -11,8 +11,7 @@ public protocol COMProjection: AnyObject {
     static var iid: IID { get }
 
     static func _create(consumingRef pointer: CPointer) -> SwiftType
-    static func _create(_ pointer: CPointer) -> SwiftType
-    static func toSwift(_ pointer: CPointer) -> SwiftType
+    static func toSwift(consumingRef pointer: CPointer) -> SwiftType
     static func asCOMPointerWithRef(_ object: SwiftType) -> CPointer?
     static func toCOMObject(_ object: SwiftType) -> SwiftType?
 }
@@ -23,13 +22,23 @@ extension COMProjection {
         return _create(consumingRef: pointer)
     }
 
-    public static func toSwift(_ pointer: CPointer) -> SwiftType {
+    public static func toSwift(consumingRef pointer: CPointer) -> SwiftType {
         // TODO: Check for ISwiftObject first
-        _create(pointer)
+        return _create(consumingRef: pointer)
     }
 
-    public static func toSwift(_ pointer: CPointer?) -> SwiftType? {
-        guard let pointer = pointer else { return nil }
+    public static func toSwift(_ pointer: CPointer) -> SwiftType {
+        _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.addRef() }
+        return toSwift(consumingRef: pointer)
+    }
+
+    public static func toSwift(consumingRef pointer: CPointer?) throws -> SwiftType {
+        guard let pointer else { throw NullResult() }
+        return toSwift(consumingRef: pointer)
+    }
+
+    public static func toSwift(_ pointer: CPointer?) throws -> SwiftType {
+        guard let pointer else { throw NullResult() }
         return toSwift(pointer)
     }
 

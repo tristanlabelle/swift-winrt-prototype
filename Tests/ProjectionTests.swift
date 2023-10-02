@@ -1,4 +1,6 @@
 import XCTest
+import UWP_WindowsFoundation
+import UWP_WindowsFoundationDiagnostics
 import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
 import WinRT
@@ -19,5 +21,11 @@ internal final class ProjectionTests: WinRTTestCase {
         let bufferByteAccess = try buffer.queryInterface(IBufferByteAccessProjection.self)
         let bufferPointer = try UnsafeMutableBufferPointer(start: bufferByteAccess.buffer, count: Int(buffer.length))
         XCTAssertEqual(Array(bufferPointer), sha256OfEmpty) 
+    }
+
+    func testAsyncMethodAndDelegates() throws {
+        let asyncOperation = try ErrorDetails.createFromHResultAsync(COMError.fail.hr)
+        let asyncInfo = try asyncOperation.queryInterface(IAsyncInfoProjection.self)
+        XCTAssertEqual(try asyncInfo.status, .started)
     }
 }

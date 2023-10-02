@@ -1,0 +1,3 @@
+import UWP
+
+public typealias ErrorDetails = WindowsFoundationDiagnostics_ErrorDetails

@@ -41,12 +41,11 @@ public final class WindowsFoundation_IAsyncInfoProjection:
     public func close() throws { try COMError.throwIfFailed(_vtable.Close(_pointer)) }
 }
 
-public protocol WindowsFoundation_IAsyncOperationProtocol<TResult>: IInspectableProtocol
-{
+public protocol WindowsFoundation_IAsyncOperationProtocol<TResult>: IInspectableProtocol {
     associatedtype TResult
 
     var completed: WindowsFoundation_AsyncOperationCompletedHandler<TResult> { get throws }
-    func completed(_ value: WindowsFoundation_AsyncOperationCompletedHandler<TResult>) throws
+    func completed(_ value: WindowsFoundation_AsyncOperationCompletedHandler<TResult>!) throws
 
     func getResults() throws -> TResult;
 }

@@ -7,7 +7,7 @@ public struct COMError: Error {
     public static let noInterface = COMError(hr: HRESULT(bitPattern: 0x80004002))
     public static let outOfMemory = COMError(hr: HRESULT(bitPattern: 0x8007000E))
 
-    var hr: HRESULT
+    public var hr: HRESULT
 
     public static func isSuccess(_ hr: HRESULT) -> Bool { hr >= 0 }
     public static func isFailure(_ hr: HRESULT) -> Bool { hr < 0 }
