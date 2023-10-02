@@ -72,3 +72,25 @@ func completed(_ value: AsyncActionCompletedHandler!) throws
 **Rationale**: Null return values are rare and WinRT projections already require handling exceptions so this unifies error handling.
 
 **Example**: `IVector` has `func getView() throws -> IVectorView` (not nullable)
+
+## Design Questions
+### Should IFoo = any IFooProtocol?
+There are two ways to project interfaces:
+```swift
+// IFoo = any IFooProtocol
+protocol IFooProtocol: IUnknownProtocol {}
+typealias IFoo = any IFooProtocol
+class IFooProjection: IFoo {}
+// IFoo = projection
+protocol IFooProtocol {} // No need for IUnknownProtocol
+class IFoo: IFooProtocol {}
+```
+
+Comparison:
+| IFoo =             | any Protocol                                                 | Projection                                                   |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Typical usage      | ➕ Like C#                                                    | ➕ Like C#                                                    |
+| Swift impls        | ➕ Straightforward declaration<br />➖ Straightforward passing in<br />➖ Ill-defined QI method | ➕ Straightforward declaration<br />➖ Passing in requires `.projection`<br />➕ No QI method |
+| Casting ergonomics | ➕ `as` supported in most cases (⚠️)<br />➖ QI requires using `Projection` class | ➖ `as` mostly unsupported (⚠️)<br />➕ No separate `Projection` type |
+| Correctness        | ➖ Can pass in non-projectable Swift objects                  | ➕ Can only pass in COM-projectable objects                   |
+| Performance        | ➖ runtimeclass lookup on creation to support `as`<br />➖ Existential protocol dispatch | ➕ No runtimeclass lookup on creation (?) <br />➕ Class virtual dispatch |
