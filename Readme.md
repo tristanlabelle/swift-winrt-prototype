@@ -26,7 +26,7 @@ One Swift module is declared for each namespace of an assembly module to provide
 **Example**: `import UWP_WindowsStorageStreams`
 
 ## Type Projections
-## Enums as structs
+### Enums as structs
 WinRT enums are projected as `Hashable` structs wrapping an Int32 value, instead of as enums. These structs implement `OptionSet` if the underlying enum has the `[Flags]` attribute.
 
 **Rationale**: WinRT does not enforce that instances of enum types have a value that matches one of the enumerants.
@@ -43,6 +43,11 @@ public struct AsyncStatus: Hashable {
     public static let error = Self(3)
 }
 ```
+
+### No inheritance between projection types
+`IInspectableProjection` does not inherit from `IUnknownProjection`, they are both leaf types. However, `IInspectableProtocol` does require `IUnknownProjection`.
+
+**Rationale**: Inheritance between projection types would make it impossible to conform to `COMProjection` differently between a base and derived projection class (conformance cannot be overriden), and it does not correctly express the COM ABI.
 
 ### IFoo and IFooProtocol naming
 Swift protocols generated for COM/WinRT interfaces have a "Protocol" suffix. The unsuffixed interface name is used for its existential typealias.
