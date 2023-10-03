@@ -21,7 +21,7 @@ extension WindowsSecurityCryptographyCore_HashAlgorithmProvider {
         defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
         var value: WindowsStorageStreams_IBufferProjection.CPointer?
         try COMError.throwIfFailed(_vtable.HashData(_pointer, data, &value))
-        return try NullResult.unwrap(WindowsStorageStreams_IBufferProjection.toSwift(consumingRef: value))
+        return try NullResult.unwrap(WindowsStorageStreams_IBufferProjection.toSwift(transferringRef: value))
     }
 
     public func createHash() throws -> WindowsSecurityCryptographyCore_CryptographicHash {

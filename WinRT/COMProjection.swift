@@ -8,39 +8,57 @@ public protocol COMProjection: AnyObject {
     typealias CPointer = UnsafeMutablePointer<CStruct>
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
+    var _pointer: CPointer { get }
+    var _swiftObject: SwiftType { get }
+
+    init(_transferringRef pointer: CPointer)
+
     static var iid: IID { get }
 
-    static func _create(consumingRef pointer: CPointer) -> SwiftType
-    static func toSwift(consumingRef pointer: CPointer) -> SwiftType
-    static func asCOMPointerWithRef(_ object: SwiftType) -> CPointer?
     static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer?
-    static func toCOMObject(_ object: SwiftType) -> SwiftType?
 }
 
 extension COMProjection {
-    public static func _create(_ pointer: CPointer) -> SwiftType {
-        _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.addRef() }
-        return _create(consumingRef: pointer)
+    public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
+        _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
 
-    public static func toSwift(consumingRef pointer: CPointer) -> SwiftType {
+    public var _vtable: CVTableStruct {
+        _read {
+            let unknownVTable = UnsafePointer(_unknown.pointee.lpVtbl!)
+            let pointer = unknownVTable.withMemoryRebound(to: CVTableStruct.self, capacity: 1) { $0 }
+            yield pointer.pointee
+        }
+    }
+
+    public init(_referencing pointer: CPointer) {
+        self.init(_transferringRef: pointer)
+        _unknown.addRef()
+    }
+
+    public static func toSwift(transferringRef pointer: CPointer) -> SwiftType {
         // TODO: Check for ISwiftObject first
-        return _create(consumingRef: pointer)
+        return Self(_transferringRef: pointer)._swiftObject
     }
 
     public static func toSwift(_ pointer: CPointer) -> SwiftType {
         _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.addRef() }
-        return toSwift(consumingRef: pointer)
+        return toSwift(transferringRef: pointer)
     }
 
-    public static func toSwift(consumingRef pointer: CPointer?) throws -> SwiftType {
+    public static func toSwift(transferringRef pointer: CPointer?) throws -> SwiftType {
         guard let pointer else { throw NullResult() }
-        return toSwift(consumingRef: pointer)
+        return toSwift(transferringRef: pointer)
     }
 
     public static func toSwift(_ pointer: CPointer?) throws -> SwiftType {
         guard let pointer else { throw NullResult() }
         return toSwift(pointer)
+    }
+
+    public static func asCOMPointerWithRef(_ object: SwiftType) -> CPointer? {
+        guard let object = object as? COMObjectBase else { return nil }
+        return try? object._unknown.queryInterface(iid, CStruct.self)
     }
 
     public static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer? {
@@ -51,7 +69,7 @@ extension COMProjection {
     public static func toCOMObject(_ object: SwiftType) -> SwiftType? {
         if object is COMObjectBase { return object }
         guard let pointer = toCOMPointerWithRef(object) else { return nil }
-        return _create(consumingRef: pointer)
+        return Self(_transferringRef: pointer)._swiftObject
     }
 }
 

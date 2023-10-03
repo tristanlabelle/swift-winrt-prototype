@@ -20,31 +20,20 @@ open class COMObjectBase {
 // Base class for COM objects projected into Swift.
 open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol {
     public let _pointer: Projection.CPointer
-    public override final var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
-        _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
-    }
+    public var _swiftObject: Projection.SwiftType { self as! Projection.SwiftType }
 
-    public var _vtable: Projection.CVTableStruct {
-        (_unknown.pointee.lpVtbl.withMemoryRebound(to: Projection.CVTableStruct.self, capacity: 1) { $0 }).pointee
-    }
-
-    public required init(_consumingRef pointer: Projection.CPointer) {
+    public required init(_transferringRef pointer: Projection.CPointer) {
         self._pointer = pointer
         super.init()
         assert(self is Projection.SwiftType, "COMObject subclass must be convertible to its SwiftType")
     }
 
     deinit {
-        _ = self._unknown.pointee.lpVtbl.pointee.Release(_unknown)
+        _ = self._unknown.release()
     }
 
-    public class func _create(consumingRef pointer: Projection.CPointer) -> Projection.SwiftType {
-        Self(_consumingRef: pointer) as! Projection.SwiftType
-    }
-
-    public static func asCOMPointerWithRef(_ object: Projection.SwiftType) -> Projection.CPointer? {
-        guard let object = object as? COMObjectBase else { return nil }
-        return try? object._unknown.queryInterface(Projection.iid, Projection.CStruct.self)
+    public override final var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
+        _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
 
     public func queryInterface<I: COMProjection>(_ iid: IID, _: I.Type) throws -> I.SwiftType {
