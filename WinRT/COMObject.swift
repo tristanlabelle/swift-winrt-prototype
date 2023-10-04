@@ -1,14 +1,21 @@
 import CWinRT
 
-open class COMObject {
+open class COMObject: IUnknownProtocol {
     public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> { fatalError() }
 
+    fileprivate init() {}
+
     public var _unsafeRefCount: UInt32 {
-        let postAddRef = _unknown.pointee.lpVtbl.pointee.AddRef(_unknown)
-        let postRelease = _unknown.pointee.lpVtbl.pointee.Release(_unknown)
+        let postAddRef = _unknown.addRef()
+        let postRelease = _unknown.release()
         assert(postRelease + 1 == postAddRef,
             "Unexpected ref count change during _unsafeRefCount")
         return postRelease
+    }
+
+    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection {
+        let pointerWithRef = try self._unknown.queryInterface(iid, Projection.CStruct.self)
+        return Projection(_transferringRef: pointerWithRef)
     }
 
     public static func _getUnsafeRefCount(_ object: IUnknown) -> UInt32 {
@@ -18,14 +25,12 @@ open class COMObject {
 }
 
 // Base class for COM objects projected into Swift.
-open class COMObjectBase<Projection: COMProjection>: COMObject, IUnknownProtocol {
+open class COMObjectBase<Projection: COMProjection>: COMObject {
     public let _pointer: Projection.CPointer
     public var _swiftValue: Projection.SwiftType { self as! Projection.SwiftType }
 
     public required init(_transferringRef pointer: Projection.CPointer) {
         self._pointer = pointer
-        super.init()
-        assert(self is Projection.SwiftType, "COMObjectBase subclass must be convertible to its SwiftType")
     }
 
     deinit {
@@ -34,10 +39,5 @@ open class COMObjectBase<Projection: COMProjection>: COMObject, IUnknownProtocol
 
     public override final var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
         _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
-    }
-
-    public func queryInterface<I: COMProjection>(_ iid: IID, _: I.Type) throws -> I {
-        let pointerWithRef = try self._unknown.queryInterface(iid, I.CStruct.self)
-        return I(_transferringRef: pointerWithRef)
     }
 }
