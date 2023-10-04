@@ -13,6 +13,14 @@ internal final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAcces
         bufferPointer.deallocate()
     }
 
+    private weak var _defaultProjection: IBufferProjection?
+    var _weakDefaultProjection: IBufferProjection {
+        if let projection = _defaultProjection { return projection }
+        let projection = IBufferProjection(projecting: self)
+        _defaultProjection = projection
+        return projection
+    }
+
     public static let projections: [any COMTwoWayProjection.Type] = [
         IBufferProjection.self,
         IBufferByteAccessProjection.self

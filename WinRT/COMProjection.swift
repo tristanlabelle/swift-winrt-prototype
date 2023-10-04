@@ -1,7 +1,7 @@
 import CWinRT
 
 // Protocol for strongly-typed COM interface projections into Swift.
-public protocol COMProjection: AnyObject {
+public protocol COMProjection: IUnknownProtocol {
     associatedtype SwiftType
     associatedtype CStruct
     associatedtype CVTableStruct
@@ -9,7 +9,7 @@ public protocol COMProjection: AnyObject {
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
     var _pointer: CPointer { get }
-    var _swiftObject: SwiftType { get }
+    var _swiftValue: SwiftType { get }
 
     init(_transferringRef pointer: CPointer)
 
@@ -36,14 +36,23 @@ extension COMProjection {
         _unknown.addRef()
     }
 
-    public static func toSwift(transferringRef pointer: CPointer) -> SwiftType {
+    public static func get(transferringRef pointer: CPointer) -> Self {
         // TODO: Check for ISwiftObject first
-        return Self(_transferringRef: pointer)._swiftObject
+        return Self(_transferringRef: pointer)
+    }
+
+    public static func get(_ pointer: CPointer) -> Self {
+        let projection = get(transferringRef: pointer)
+        projection._unknown.addRef()
+        return projection
+    }
+
+    public static func toSwift(transferringRef pointer: CPointer) -> SwiftType {
+        get(transferringRef: pointer)._swiftValue
     }
 
     public static func toSwift(_ pointer: CPointer) -> SwiftType {
-        _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.addRef() }
-        return toSwift(transferringRef: pointer)
+        get(pointer)._swiftValue
     }
 
     public static func toSwift(transferringRef pointer: CPointer?) throws -> SwiftType {
@@ -69,7 +78,7 @@ extension COMProjection {
     public static func toCOMObject(_ object: SwiftType) -> SwiftType? {
         if object is COMObjectBase { return object }
         guard let pointer = toCOMPointerWithRef(object) else { return nil }
-        return Self(_transferringRef: pointer)._swiftObject
+        return Self(_transferringRef: pointer)._swiftValue
     }
 }
 
@@ -79,21 +88,33 @@ public protocol COMTwoWayProjection: COMProjection {
 }
 
 extension COMTwoWayProjection {
-    public static func toCOMUnknown(_ object: IUnknown) -> IUnknown {
-        toCOMObject(object as! SwiftType) as! IUnknown
+    public init(projecting object: SwiftType) {
+        precondition(!(object is COMObjectBase))
+        let pointerWithRef = COMWrapper<Self>.allocate(object: object, vtable: Self._vtable)
+        self.init(_transferringRef: pointerWithRef)
+    }
+
+    public static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer {
+        if let pointer = asCOMPointerWithRef(object) { return pointer }
+        return COMWrapper<Self>.allocate(object: object, vtable: _vtable)
     }
 }
 
 // Implemented by a Swift class that should be interoperable with COM.
 public protocol COMExport: IUnknownProtocol {
+    associatedtype DefaultProjection: COMTwoWayProjection
+
+    // Provides identity for the COM projection of a Swift object.
+    // This is what QueryInterface(IUnknown/IInspectable) returns.
+    // Should be backed by a weak field that is initialized just-in-time.
+    var _weakDefaultProjection: DefaultProjection { get }
+
     static var projections: [any COMTwoWayProjection.Type] { get }
 }
 
 extension COMExport {
-    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection.SwiftType {
-        guard Self.projections.first(where: { $0.iid == iid }) != nil else { throw COMError.noInterface }
-        guard let swiftInterface = self as? Projection.SwiftType else { throw COMError.noInterface }
-        guard let comObject = Projection.toCOMObject(swiftInterface) else { throw COMError.noInterface }
-        return comObject
+    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection {
+        precondition(iid == Projection.iid || Projection.self == IUnknownProjection.self)
+        return try self._weakDefaultProjection.queryInterface(iid, Projection.self)
     }
 }
