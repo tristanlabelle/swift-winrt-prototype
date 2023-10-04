@@ -6,7 +6,7 @@ public protocol IBufferByteAccessProtocol: IUnknownProtocol {
 public typealias IBufferByteAccess = any IBufferByteAccessProtocol
 
 public final class IBufferByteAccessProjection:
-        COMObject<IBufferByteAccessProjection>, COMTwoWayProjection, IBufferByteAccessProtocol {
+        COMObjectBase<IBufferByteAccessProjection>, COMTwoWayProjection, IBufferByteAccessProtocol {
     public typealias SwiftType = IBufferByteAccess
     public typealias CStruct = CWinRT.IBufferByteAccess
     public typealias CVTableStruct = CWinRT.IBufferByteAccessVtbl

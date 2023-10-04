@@ -1,6 +1,6 @@
 import CWinRT
 
-open class COMObjectBase {
+open class COMObject {
     public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> { fatalError() }
 
     public var _unsafeRefCount: UInt32 {
@@ -12,20 +12,20 @@ open class COMObjectBase {
     }
 
     public static func _getUnsafeRefCount(_ object: IUnknown) -> UInt32 {
-        guard let object = object as? COMObjectBase else { return 0 }
+        guard let object = object as? COMObject else { return 0 }
         return object._unsafeRefCount
     }
 }
 
 // Base class for COM objects projected into Swift.
-open class COMObject<Projection: COMProjection>: COMObjectBase, IUnknownProtocol {
+open class COMObjectBase<Projection: COMProjection>: COMObject, IUnknownProtocol {
     public let _pointer: Projection.CPointer
     public var _swiftValue: Projection.SwiftType { self as! Projection.SwiftType }
 
     public required init(_transferringRef pointer: Projection.CPointer) {
         self._pointer = pointer
         super.init()
-        assert(self is Projection.SwiftType, "COMObject subclass must be convertible to its SwiftType")
+        assert(self is Projection.SwiftType, "COMObjectBase subclass must be convertible to its SwiftType")
     }
 
     deinit {

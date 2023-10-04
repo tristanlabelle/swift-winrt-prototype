@@ -1,6 +1,6 @@
 import CWinRT
 
-extension COMObject where Projection: COMTwoWayProjection {
+extension COMObjectBase where Projection: COMTwoWayProjection {
     public static func _getObject(_ pointer: Projection.CPointer?) -> Projection.SwiftType? {
         guard let pointer else { return nil }
         return pointer.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { $0.pointee.object }

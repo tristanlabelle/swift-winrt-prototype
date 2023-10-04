@@ -66,7 +66,7 @@ extension COMProjection {
     }
 
     public static func asCOMPointerWithRef(_ object: SwiftType) -> CPointer? {
-        guard let object = object as? COMObjectBase else { return nil }
+        guard let object = object as? COMObject else { return nil }
         return try? object._unknown.queryInterface(iid, CStruct.self)
     }
 
@@ -75,8 +75,8 @@ extension COMProjection {
         asCOMPointerWithRef(object)
     }
 
-    public static func toCOMObject(_ object: SwiftType) -> SwiftType? {
-        if object is COMObjectBase { return object }
+    public static func toCOMObjectBase(_ object: SwiftType) -> SwiftType? {
+        if object is COMObject { return object }
         guard let pointer = toCOMPointerWithRef(object) else { return nil }
         return Self(_transferringRef: pointer)._swiftValue
     }
@@ -89,7 +89,7 @@ public protocol COMTwoWayProjection: COMProjection {
 
 extension COMTwoWayProjection {
     public init(projecting object: SwiftType) {
-        precondition(!(object is COMObjectBase))
+        precondition(!(object is COMObject))
         let pointerWithRef = COMWrapper<Self>.allocate(object: object, vtable: Self._vtable)
         self.init(_transferringRef: pointerWithRef)
     }
