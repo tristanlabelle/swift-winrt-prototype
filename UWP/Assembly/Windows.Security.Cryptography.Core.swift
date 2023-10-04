@@ -2,7 +2,7 @@ import WinRT
 
 extension WindowsSecurityCryptographyCore_CryptographicHash {
     public func append(_ data: WindowsStorageStreams_IBuffer!) throws {
-        let data = WindowsStorageStreams_IBufferProjection.toCOMPointerWithRef(data)
+        let data = try data._queryInterfacePointer(WindowsStorageStreams_IBufferProjection.self)
         defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
         try COMError.throwIfFailed(_vtable.Append(_pointer, data))
     }
@@ -17,7 +17,7 @@ extension WindowsSecurityCryptographyCore_HashAlgorithmProvider {
     public var hashLength: UInt32 { get throws { try _getter(_vtable.get_HashLength) } }
 
     public func hashData(_ data: WindowsStorageStreams_IBuffer!) throws -> WindowsStorageStreams_IBuffer {
-        let data = WindowsStorageStreams_IBufferProjection.toCOMPointerWithRef(data)
+        let data = try data._queryInterfacePointer(WindowsStorageStreams_IBufferProjection.self)
         defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
         var value: WindowsStorageStreams_IBufferProjection.CPointer?
         try COMError.throwIfFailed(_vtable.HashData(_pointer, data, &value))

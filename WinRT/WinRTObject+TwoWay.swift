@@ -8,7 +8,7 @@ extension WinRTObject where Projection: WinRTTwoWayProjection {
         guard let this, let count, let iids else { return COMError.invalidArg.hr }
         count.pointee = 0
         iids.pointee = nil
-        let object = _getObject(this) as! IInspectable
+        let object = _getImplementation(this) as! IInspectable
         return COMError.catch {
             let iidsArray = try object.getIids()
             count.pointee = UInt32(iidsArray.count)
@@ -27,7 +27,7 @@ extension WinRTObject where Projection: WinRTTwoWayProjection {
             _ className: UnsafeMutablePointer<HSTRING?>?) -> HRESULT {
         guard let this, let className else { return COMError.invalidArg.hr }
         className.pointee = nil
-        let object = _getObject(this) as! IInspectable
+        let object = _getImplementation(this) as! IInspectable
         return COMError.catch { className.pointee = try HSTRING.create(object.getRuntimeClassName()) }
     }
 
@@ -35,7 +35,7 @@ extension WinRTObject where Projection: WinRTTwoWayProjection {
             _ this: Projection.CPointer?,
             _ trustLevel: UnsafeMutablePointer<CWinRT.TrustLevel>?) -> HRESULT {
         guard let this, let trustLevel else { return COMError.invalidArg.hr }
-        let object = _getObject(this) as! IInspectable
+        let object = _getImplementation(this) as! IInspectable
         return COMError.catch { trustLevel.pointee = try object.getTrustLevel() }
     }
 }

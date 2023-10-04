@@ -32,17 +32,14 @@ extension COMObjectBase {
     public func _objectSetter<ValueProjection: COMProjection>(
             _ function: (Projection.CPointer, ValueProjection.CPointer?) -> HRESULT,
             _ value: ValueProjection.SwiftType?,
-            _: ValueProjection.Type) throws {
-        guard let value else {
+            _: ValueProjection.Type) throws where ValueProjection.SwiftType: IUnknownProtocol {
+        if let value {
+            let pointerWithRef = try value._queryInterfacePointer(ValueProjection.self)
+            defer { _ = pointerWithRef.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
+            try COMError.throwIfFailed(function(_pointer, pointerWithRef))
+        }
+        else {
             try COMError.throwIfFailed(function(_pointer, nil))
-            return
         }
-
-        guard let valuePointer = ValueProjection.toCOMPointerWithRef(value) else {
-            fatalError("Unprojectable value")
-        }
-        defer { _ = valuePointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
-
-        try COMError.throwIfFailed(function(_pointer, valuePointer))
     }
 }

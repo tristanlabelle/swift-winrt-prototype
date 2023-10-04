@@ -5,7 +5,7 @@ extension WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnosti
         try _objectGetter(_vtable.get_Completed, WindowsFoundation_AsyncOperationCompletedHandlerProjection<TResult>.Instance.self)
     } }
     public func completed(_ value: WindowsFoundation_AsyncOperationCompletedHandler<TResult>!) throws {
-        try _objectSetter(_vtable.put_Completed, value, WindowsFoundation_AsyncOperationCompletedHandlerProjection<TResult>.Instance.self)
+        fatalError("\(#function) is not implemented")
     }
 
     public func getResults() throws -> TResult { try _objectGetter(_vtable.GetResults, TResult.self) }

@@ -1,22 +1,23 @@
 import CWinRT
 
 public protocol IUnknownProtocol: AnyObject {
-    func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection
+    func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown>
 }
 public typealias IUnknown = any IUnknownProtocol
 
 extension IUnknownProtocol {
-    public func queryInterface<Projection: COMProjection>(_: Projection.Type) throws -> Projection {
-        try self.queryInterface(Projection.iid, Projection.self)
+    public func _queryInterfacePointer<Projection: COMProjection>(_: Projection.Type) throws -> Projection.CPointer {
+        try _queryInterfacePointer(Projection.iid).withMemoryRebound(to: Projection.CStruct.self, capacity: 1) { $0 }
     }
 
-    public func tryQueryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection? {
-        do { return try self.queryInterface(iid, Projection.self) }
-        catch let error as COMError where error.hr == COMError.noInterface.hr { return nil }
-        catch { throw error }
+    public func queryInterface<Projection: COMProjection>(_: Projection.Type) throws -> Projection {
+        let pointer = try self._queryInterfacePointer(Projection.iid)
+        return pointer.withMemoryRebound(to: Projection.CStruct.self, capacity: 1) {
+            return Projection.get(transferringRef: $0)
+        }
     }
 
     public func tryQueryInterface<Projection: COMProjection>(_: Projection.Type) throws -> Projection? {
-       try tryQueryInterface(Projection.iid, Projection.self)
+       return try NullResult.catch { try self.queryInterface(Projection.self) }
     }
 }

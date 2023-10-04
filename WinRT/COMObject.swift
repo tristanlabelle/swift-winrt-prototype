@@ -13,9 +13,8 @@ open class COMObject: IUnknownProtocol {
         return postRelease
     }
 
-    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection {
-        let pointerWithRef = try self._unknown.queryInterface(iid, Projection.CStruct.self)
-        return Projection(_transferringRef: pointerWithRef)
+    public func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
+        try _unknown.queryInterface(iid)
     }
 
     public static func _getUnsafeRefCount(_ object: IUnknown) -> UInt32 {

@@ -11,6 +11,11 @@ extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
         self.pointee.lpVtbl.pointee.Release(self)
     }
 
+    public func withAddedRef() -> UnsafeMutablePointer<CWinRT.IUnknown> {
+        self.addRef()
+        return self
+    }
+
     public func queryInterface<CStruct>(_ iid: IID, _ type: CStruct.Type) throws -> UnsafeMutablePointer<CStruct> {
         var iid = iid
         var pointer: UnsafeMutableRawPointer? = nil

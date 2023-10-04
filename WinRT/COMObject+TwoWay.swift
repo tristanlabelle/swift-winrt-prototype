@@ -1,13 +1,13 @@
 import CWinRT
 
 extension COMObjectBase where Projection: COMTwoWayProjection {
-    public static func _getObject(_ pointer: Projection.CPointer?) -> Projection.SwiftType? {
-        guard let pointer else { return nil }
-        return pointer.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { $0.pointee.object }
+    public static func _getImplementation(_ pointer: Projection.CPointer) -> Projection.SwiftType {
+        COMWrapper<Projection>.from(pointer).implementation
     }
 
-    public static func _getObject(_ pointer: Projection.CPointer) -> Projection.SwiftType {
-        pointer.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { $0.pointee.object }
+    public static func _getImplementation(_ pointer: Projection.CPointer?) -> Projection.SwiftType? {
+        guard let pointer else { return nil }
+        return COMWrapper<Projection>.from(pointer).implementation
     }
 
     public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftType) throws -> Void) -> HRESULT {
@@ -15,9 +15,7 @@ extension COMObjectBase where Projection: COMTwoWayProjection {
             assertionFailure("COM this pointer was null")
             return COMError.invalidArg.hr
         }
-        return this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { wrapper in
-            COMError.catch { try body(wrapper.pointee.object) }
-        }
+        return COMError.catch { try body(_getImplementation(this)) }
     }
 
     public static func _getter<Value>(
@@ -34,51 +32,24 @@ extension COMObjectBase where Projection: COMTwoWayProjection {
         _ this: Projection.CPointer?,
         _ iid: UnsafePointer<IID>?,
         _ ppvObject: UnsafeMutablePointer<UnsafeMutableRawPointer?>?) -> HRESULT {
+        guard let ppvObject else { return COMError.invalidArg.hr }
+        ppvObject.pointee = nil
 
-        guard let this, let iid, let ppvObject else {
-            ppvObject?.pointee = nil
-            return COMError.invalidArg.hr
-        }
+        guard let this, let iid else { return COMError.invalidArg.hr }
 
-        return this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { wrapper -> HRESULT in
-            let iid = iid.pointee
-            if iid == IUnknownProjection.iid || iid == Projection.iid
-                || (iid == IInspectableProjection.iid && Projection.self is (any WinRTProjection).Type) {
-
-                ppvObject.pointee = UnsafeMutableRawPointer(this)
-                wrapper.pointee.addRef()
-                return 0
-            }
-
-            let wrapper = this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) { $0 }
-            ppvObject.pointee = nil
-            return COMError.catch {
-                let unknown = wrapper.pointee.object as! IUnknown
-                let swiftResult = try unknown.queryInterface(iid, IUnknownProjection.self)
-                let comResult = IUnknownProjection.toCOMPointerWithRef(swiftResult)
-                ppvObject.pointee = UnsafeMutableRawPointer(comResult)
-            }
+        return COMError.catch {
+            let unknownWithRef = try COMWrapper<Projection>.queryInterface(this, iid.pointee)
+            ppvObject.pointee = UnsafeMutableRawPointer(unknownWithRef)
         }
     }
 
     public static func _addRef(_ this: Projection.CPointer?) -> UInt32 {
         guard let this else { return 0 }
-        return this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) {
-            $0.pointee.addRef()
-        }
+        return COMWrapper<Projection>.addRef(this)
     }
 
     public static func _release(_ this: Projection.CPointer?) -> UInt32 {
         guard let this else { return 0 }
-        // TODO: Make atomic
-        let newRefCount = this.withMemoryRebound(to: COMWrapper<Projection>.self, capacity: 1) {
-            $0.pointee.refCount -= 1
-            if $0.pointee.refCount == 0 {
-                $0.pointee.object = nil
-            }
-            return $0.pointee.refCount
-        }
-        if newRefCount == 0 { this.deallocate() }
-        return newRefCount
+        return COMWrapper<Projection>.release(this)
     }
 }

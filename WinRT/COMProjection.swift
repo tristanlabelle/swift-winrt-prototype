@@ -14,8 +14,6 @@ public protocol COMProjection: IUnknownProtocol {
     init(_transferringRef pointer: CPointer)
 
     static var iid: IID { get }
-
-    static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer?
 }
 
 extension COMProjection {
@@ -64,40 +62,11 @@ extension COMProjection {
         guard let pointer else { throw NullResult() }
         return toSwift(pointer)
     }
-
-    public static func asCOMPointerWithRef(_ object: SwiftType) -> CPointer? {
-        guard let object = object as? COMObject else { return nil }
-        return try? object._unknown.queryInterface(iid, CStruct.self)
-    }
-
-    public static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer? {
-        // WinRTTwoWayProjection overrides this
-        asCOMPointerWithRef(object)
-    }
-
-    public static func toCOMObjectBase(_ object: SwiftType) -> SwiftType? {
-        if object is COMObject { return object }
-        guard let pointer = toCOMPointerWithRef(object) else { return nil }
-        return Self(_transferringRef: pointer)._swiftValue
-    }
 }
 
 // Protocol for strongly-typed two-way COM interface projections into and from Swift.
 public protocol COMTwoWayProjection: COMProjection {
     static var _vtable: CVTablePointer { get }
-}
-
-extension COMTwoWayProjection {
-    public init(projecting object: SwiftType) {
-        precondition(!(object is COMObject))
-        let pointerWithRef = COMWrapper<Self>.allocate(object: object, vtable: Self._vtable)
-        self.init(_transferringRef: pointerWithRef)
-    }
-
-    public static func toCOMPointerWithRef(_ object: SwiftType) -> CPointer {
-        if let pointer = asCOMPointerWithRef(object) { return pointer }
-        return COMWrapper<Self>.allocate(object: object, vtable: _vtable)
-    }
 }
 
 // Implemented by a Swift class that should be interoperable with COM.
@@ -107,14 +76,23 @@ public protocol COMExport: IUnknownProtocol {
     // Provides identity for the COM projection of a Swift object.
     // This is what QueryInterface(IUnknown/IInspectable) returns.
     // Should be backed by a weak field that is initialized just-in-time.
-    var _weakDefaultProjection: DefaultProjection { get }
+    func _getWeakIdentity() -> COMWrapper<DefaultProjection>
 
     static var projections: [any COMTwoWayProjection.Type] { get }
 }
 
 extension COMExport {
-    public func queryInterface<Projection: COMProjection>(_ iid: IID, _: Projection.Type) throws -> Projection {
-        precondition(iid == Projection.iid || Projection.self == IUnknownProjection.self)
-        return try self._weakDefaultProjection.queryInterface(iid, Projection.self)
+    public func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
+        switch iid {
+            case IUnknownProjection.iid, DefaultProjection.iid:
+                return _getWeakIdentity().unknownPointer.withAddedRef()
+
+            case IInspectableProjection.iid:
+                guard _getWeakIdentity().isInspectable else { throw COMError.noInterface }
+                return _getWeakIdentity().unknownPointer.withAddedRef()
+
+            default:
+                fatalError()
+        }
     }
 }
