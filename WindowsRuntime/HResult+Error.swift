@@ -29,7 +29,7 @@ extension HResult {
     }
 
     /// A Swift error for a failed HResult value.
-    public struct Error: Swift.Error, Hashable, CustomStringConvertible {
+    public struct Error: COMError, Hashable, CustomStringConvertible {
         public static let fail = Self(failed: HResult.fail)
         public static let invalidArg = Self(failed: HResult.invalidArg)
         public static let notImpl = Self(failed: HResult.notImpl)
