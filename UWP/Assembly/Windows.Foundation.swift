@@ -1,4 +1,4 @@
-import WinRT
+import WindowsRuntime
 
 public struct WindowsFoundation_AsyncStatus: Hashable {
     public var value: Int32

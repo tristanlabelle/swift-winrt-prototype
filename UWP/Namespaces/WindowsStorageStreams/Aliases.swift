@@ -1,4 +1,4 @@
-import UWP
+import UWP_Assembly
 
 public protocol IBufferProtocol: WindowsStorageStreams_IBufferProtocol {}
 public typealias IBuffer = WindowsStorageStreams_IBuffer

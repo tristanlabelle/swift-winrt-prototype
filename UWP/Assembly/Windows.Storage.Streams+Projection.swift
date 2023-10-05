@@ -1,4 +1,4 @@
-import WinRT
+import WindowsRuntime
 
 public protocol WindowsStorageStreams_IBufferProtocol: IInspectableProtocol {
     var capacity: UInt32 { get throws }

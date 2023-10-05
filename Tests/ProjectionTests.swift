@@ -3,7 +3,7 @@ import UWP_WindowsFoundation
 import UWP_WindowsFoundationDiagnostics
 import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
-import WinRT
+import WindowsRuntime
 
 internal final class ProjectionTests: WinRTTestCase {
     func testActivationFactory() throws {

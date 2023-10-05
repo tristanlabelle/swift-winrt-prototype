@@ -1,5 +1,5 @@
 import CWinRT
-import WinRT
+import WindowsRuntime
 
 public final class WindowsStorageStreams_IBufferProjection:
         WinRTObject<WindowsStorageStreams_IBufferProjection>, WinRTTwoWayProjection, WindowsStorageStreams_IBufferProtocol {

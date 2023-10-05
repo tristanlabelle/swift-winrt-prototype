@@ -1,4 +1,4 @@
-import UWP
+import UWP_Assembly
 
 public typealias AsyncStatus = WindowsFoundation_AsyncStatus
 public typealias AsyncOperationCompletedHandler<TResult> = WindowsFoundation_AsyncOperationCompletedHandler<TResult>

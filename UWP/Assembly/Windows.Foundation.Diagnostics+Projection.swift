@@ -1,5 +1,5 @@
 import CWinRT
-import WinRT
+import WindowsRuntime
 
 public final class WindowsFoundationDiagnostics_ErrorDetails:
         WinRTObject<WindowsFoundationDiagnostics_ErrorDetails>, WinRTProjection {

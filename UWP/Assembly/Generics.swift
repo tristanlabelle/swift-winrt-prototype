@@ -1,4 +1,4 @@
-import WinRT
+import WindowsRuntime
 
 extension WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance {
     public var completed: WindowsFoundation_AsyncOperationCompletedHandler<TResult> { get throws {

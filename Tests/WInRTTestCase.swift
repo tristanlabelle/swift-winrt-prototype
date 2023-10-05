@@ -1,5 +1,5 @@
 import XCTest
-import WinRT
+import WindowsRuntime
 
 internal class WinRTTestCase: XCTestCase {
     private static var winRTInit: Result<WinRTInitialization, any Error>?

@@ -1,4 +1,4 @@
-import WinRT
+import WindowsRuntime
 
 extension WindowsFoundationDiagnostics_ErrorDetails {
     public var description: String { get throws { try _stringGetter(_vtable.get_Description) } }

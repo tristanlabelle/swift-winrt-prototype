@@ -1,7 +1,7 @@
 import XCTest
 import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
-import WinRT
+import WindowsRuntime
 
 internal final class QueryInterfaceTests: WinRTTestCase {
     func testIUnknownIdentityRule() throws {

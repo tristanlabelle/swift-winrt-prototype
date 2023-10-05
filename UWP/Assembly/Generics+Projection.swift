@@ -1,5 +1,5 @@
 import CWinRT
-import WinRT
+import WindowsRuntime
 
 extension WindowsFoundation_AsyncOperationCompletedHandlerProjection where TResult == WindowsFoundationDiagnostics_ErrorDetails {
     internal final class Instance: WinRTObject<Instance>, WinRTProjection {

@@ -1,4 +1,4 @@
-import WinRT
+import WindowsRuntime
 
 extension WindowsSecurityCryptographyCore_CryptographicHash {
     public func append(_ data: WindowsStorageStreams_IBuffer!) throws {

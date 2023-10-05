@@ -1,5 +1,5 @@
 import CWinRT
-import WinRT
+import WindowsRuntime
 
 public final class WindowsSecurityCryptographyCore_CryptographicHash:
         WinRTObject<WindowsSecurityCryptographyCore_CryptographicHash>, WinRTProjection {

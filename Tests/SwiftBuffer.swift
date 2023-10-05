@@ -1,4 +1,4 @@
-import WinRT
+import WindowsRuntime
 import UWP_WindowsStorageStreams
 
 internal final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol {

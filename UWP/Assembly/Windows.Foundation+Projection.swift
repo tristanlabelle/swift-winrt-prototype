@@ -1,5 +1,5 @@
 import CWinRT
-import WinRT
+import WindowsRuntime
 
 extension WindowsFoundation_AsyncStatus: WinRTEnum {
     public typealias CEnum = CWinRT.AsyncStatus

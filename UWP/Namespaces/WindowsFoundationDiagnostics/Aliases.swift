@@ -1,3 +1,3 @@
-import UWP
+import UWP_Assembly
 
 public typealias ErrorDetails = WindowsFoundationDiagnostics_ErrorDetails

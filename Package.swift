@@ -11,33 +11,33 @@ let package = Package(
             path: "CWinRT",
             linkerSettings: [ .linkedLibrary("WindowsApp.lib") ]),
         .target(
-            name: "WinRT",
+            name: "WindowsRuntime",
             dependencies: ["CWinRT"],
-            path: "WinRT"),
+            path: "WindowsRuntime"),
         .target(
-            name: "UWP",
-            dependencies: ["CWinRT", "WinRT"],
+            name: "UWP_Assembly",
+            dependencies: ["CWinRT", "WindowsRuntime"],
             path: "UWP/Assembly"),
         .target(
             name: "UWP_WindowsFoundation",
-            dependencies: ["UWP"],
+            dependencies: ["UWP_Assembly"],
             path: "UWP/Namespaces/WindowsFoundation"),
         .target(
             name: "UWP_WindowsFoundationDiagnostics",
-            dependencies: ["UWP"],
+            dependencies: ["UWP_Assembly"],
             path: "UWP/Namespaces/WindowsFoundationDiagnostics"),
         .target(
             name: "UWP_WindowsSecurityCryptographyCore",
-            dependencies: ["UWP"],
+            dependencies: ["UWP_Assembly"],
             path: "UWP/Namespaces/WindowsSecurityCryptographyCore"),
         .target(
             name: "UWP_WindowsStorageStreams",
-            dependencies: ["UWP"],
+            dependencies: ["UWP_Assembly"],
             path: "UWP/Namespaces/WindowsStorageStreams"),
         .testTarget(
             name: "Tests",
             dependencies: [
-                "WinRT",
+                "WindowsRuntime",
                 "UWP_WindowsFoundation",
                 "UWP_WindowsFoundationDiagnostics",
                 "UWP_WindowsSecurityCryptographyCore",
