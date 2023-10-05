@@ -13,9 +13,9 @@ extension COMObjectBase where Projection: COMTwoWayProjection {
     public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftType) throws -> Void) -> HRESULT {
         guard let this else {
             assertionFailure("COM this pointer was null")
-            return COMError.invalidArg.hr
+            return HResult.invalidArg.value
         }
-        return COMError.catch { try body(_getImplementation(this)) }
+        return HResult.catchValue { try body(_getImplementation(this)) }
     }
 
     public static func _getter<Value>(
@@ -23,7 +23,7 @@ extension COMObjectBase where Projection: COMTwoWayProjection {
             _ value: UnsafeMutablePointer<Value>?,
             _ code: (Projection.SwiftType) throws -> Value) -> HRESULT {
         _implement(this) {
-            guard let value else { throw COMError.invalidArg }
+            guard let value else { throw HResult.Error.invalidArg }
             value.pointee = try code($0)
         }
     }
@@ -32,12 +32,12 @@ extension COMObjectBase where Projection: COMTwoWayProjection {
         _ this: Projection.CPointer?,
         _ iid: UnsafePointer<IID>?,
         _ ppvObject: UnsafeMutablePointer<UnsafeMutableRawPointer?>?) -> HRESULT {
-        guard let ppvObject else { return COMError.invalidArg.hr }
+        guard let ppvObject else { return HResult.invalidArg.value }
         ppvObject.pointee = nil
 
-        guard let this, let iid else { return COMError.invalidArg.hr }
+        guard let this, let iid else { return HResult.invalidArg.value }
 
-        return COMError.catch {
+        return HResult.catchValue {
             let unknownWithRef = try COMExport<Projection>.queryInterface(this, iid.pointee)
             ppvObject.pointee = UnsafeMutableRawPointer(unknownWithRef)
         }

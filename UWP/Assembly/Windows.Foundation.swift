@@ -15,7 +15,7 @@ public typealias WindowsFoundation_AsyncOperationCompletedHandler<TResult> = (Wi
 public protocol WindowsFoundation_IAsyncInfoProtocol: IInspectableProtocol {
     var id: UInt32 { get throws }
     var status: WindowsFoundation_AsyncStatus { get throws }
-    var errorCode: HRESULT { get throws }
+    var errorCode: HResult { get throws }
 
     func cancel() throws
     func close() throws

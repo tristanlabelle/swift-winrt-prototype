@@ -17,8 +17,8 @@ extension WinRTProjection {
         let hr = CWinRT.RoGetActivationFactory(activatableId, &iid, &factory)
         let unknown = factory?.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)
         defer { _ = unknown?.pointee.lpVtbl.pointee.Release(unknown) }
-        try COMError.throwIfFailed(hr)
-        guard let factory else { throw COMError.noInterface }
+        try HResult.throwIfFailed(hr)
+        guard let factory else { throw HResult.Error.noInterface }
         return Factory.toSwift(factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
     }
 }

@@ -22,9 +22,9 @@ internal final class WindowsFoundationDiagnostics_IErrorDetailsStatics:
     public static let iid = IID(0xB7703750, 0x0B1D, 0x46C8, 0xAA0E, 0x4B8178E4FCE9)
     public static var runtimeClassName: String { "Windows.Foundation.Diagnostics.IErrorDetailsStatics" }
 
-    public func createFromHResultAsync(_ errorCode: HRESULT) throws -> WindowsFoundation_IAsyncOperation<WindowsFoundationDiagnostics_ErrorDetails> {
+    public func createFromHResultAsync(_ errorCode: HResult) throws -> WindowsFoundation_IAsyncOperation<WindowsFoundationDiagnostics_ErrorDetails> {
         var result: WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.CPointer?
-        try COMError.throwIfFailed(_vtable.CreateFromHResultAsync(_pointer, errorCode, &result))
+        try HResult.throwIfFailed(_vtable.CreateFromHResultAsync(_pointer, errorCode.value, &result))
         return try WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.toSwift(transferringRef: result)
     }
 }

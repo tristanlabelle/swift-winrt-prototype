@@ -22,5 +22,5 @@ internal final class SwiftBuffer: WinRTExport<IBufferProjection>, IBufferProtoco
     public var length: UInt32 { get throws { UInt32(bufferPointer.count) } }
     public var buffer: UnsafeMutablePointer<UInt8> { get throws { try NullResult.unwrap(bufferPointer.baseAddress) } }
 
-    public func length(_ value: UInt32) throws { throw COMError.notImpl }
+    public func length(_ value: UInt32) throws { throw HResult.Error.notImpl }
 }

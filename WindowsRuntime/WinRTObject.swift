@@ -10,8 +10,8 @@ open class WinRTObject<Projection: WinRTProjection>: COMObjectBase<Projection>, 
         var iids: UnsafeMutablePointer<IID>?
         let hr = _inspectable.pointee.lpVtbl.pointee.GetIids(_inspectable, &count, &iids)
         defer { CoTaskMemFree(UnsafeMutableRawPointer(iids)) }
-        try COMError.throwIfFailed(hr)
-        guard let iids else { throw COMError.fail }
+        try HResult.throwIfFailed(hr)
+        guard let iids else { throw HResult.Error.fail }
         return Array(UnsafeBufferPointer(start: iids, count: Int(count)))
     }
 
@@ -19,14 +19,14 @@ open class WinRTObject<Projection: WinRTProjection>: COMObjectBase<Projection>, 
         var className: HSTRING?
         let hr = _inspectable.pointee.lpVtbl.pointee.GetRuntimeClassName(_inspectable, &className)
         defer { HSTRING.delete(className) }
-        try COMError.throwIfFailed(hr)
+        try HResult.throwIfFailed(hr)
         return className.toString()
     }
 
     public func getTrustLevel() throws -> CWinRT.TrustLevel {
         var trustLevel: CWinRT.TrustLevel = CWinRT.BaseTrust
         let hr = _inspectable.pointee.lpVtbl.pointee.GetTrustLevel(_inspectable, &trustLevel)
-        try COMError.throwIfFailed(hr)
+        try HResult.throwIfFailed(hr)
         return trustLevel
     }
 }

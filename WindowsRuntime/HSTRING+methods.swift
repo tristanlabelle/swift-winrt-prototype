@@ -5,14 +5,14 @@ extension HSTRING {
         let chars = Array(value.utf16)
         return try chars.withUnsafeBufferPointer {
             var result: HSTRING?
-            try COMError.throwIfFailed(CWinRT.WindowsCreateString($0.baseAddress!, UInt32(chars.count), &result))
+            try HResult.throwIfFailed(CWinRT.WindowsCreateString($0.baseAddress!, UInt32(chars.count), &result))
             return result
         }
     }
 
     public static func delete(_ value: HSTRING?) {
         let hr = CWinRT.WindowsDeleteString(value)
-        assert(COMError.isSuccess(hr), "Failed to delete HSTRING")
+        assert(HResult.isSuccess(hr), "Failed to delete HSTRING")
     }
 
     public static func toStringAndDelete(_ value: HSTRING?) -> String {
@@ -25,7 +25,7 @@ extension HSTRING {
 extension Optional where Wrapped == HSTRING {
     public func duplicate() throws -> Self {
         var result: HSTRING?
-        try COMError.throwIfFailed(CWinRT.WindowsDuplicateString(self, &result))
+        try HResult.throwIfFailed(CWinRT.WindowsDuplicateString(self, &result))
         return result
     }
 

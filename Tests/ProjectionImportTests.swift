@@ -24,7 +24,7 @@ internal final class ProjectionImportTests: WinRTTestCase {
     }
 
     func testAsyncMethodAndDelegates() throws {
-        let asyncOperation = try ErrorDetails.createFromHResultAsync(COMError.fail.hr)
+        let asyncOperation = try ErrorDetails.createFromHResultAsync(HResult.fail)
         let asyncInfo = try asyncOperation.queryInterface(IAsyncInfoProjection.self)
         XCTAssertEqual(try asyncInfo.status, .started)
     }

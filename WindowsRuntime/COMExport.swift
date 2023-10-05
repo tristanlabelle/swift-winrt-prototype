@@ -38,11 +38,11 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
             case IUnknownProjection.iid, comExportIID, Projection.iid:
                 return unknownPointer.withAddedRef() // The current object is the identity
             case IInspectableProjection.iid:
-                guard isInspectable else { throw COMError.noInterface }
+                guard isInspectable else { throw HResult.Error.noInterface }
                 return unknownPointer.withAddedRef()
 
             default:
-                guard let interface = Self.queriableInterfaces.first(where: { $0.iid == iid }) else { throw COMError.noInterface }
+                guard let interface = Self.queriableInterfaces.first(where: { $0.iid == iid }) else { throw HResult.Error.noInterface }
                 return try interface.queryPointer(self)
         }
     }

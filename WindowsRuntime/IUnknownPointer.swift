@@ -21,15 +21,15 @@ extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
         var pointer: UnsafeMutableRawPointer? = nil
         let hr = self.pointee.lpVtbl.pointee.QueryInterface(self, &iid, &pointer)
         guard let pointer else {
-            try COMError.throwIfFailed(hr)
+            try HResult.throwIfFailed(hr)
             assertionFailure("QueryInterface succeeded but returned a null pointer")
-            throw COMError.noInterface
+            throw HResult.Error.noInterface
         }
 
-        if COMError.isFailure(hr) {
+        if let error = HResult.Error(hresult: hr) {
             assertionFailure("QueryInterface failed but returned a non-null pointer")
             pointer.bindMemory(to: CWinRT.IUnknown.self, capacity: 1).release()
-            throw COMError(hr: hr)
+            throw error
         }
 
         return pointer.bindMemory(to: CStruct.self, capacity: 1)
