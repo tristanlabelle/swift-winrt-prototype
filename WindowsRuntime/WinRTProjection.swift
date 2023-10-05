@@ -22,20 +22,3 @@ extension WinRTProjection {
         return Factory.toSwift(factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
     }
 }
-
-// Implemented by a Swift class that should be interoperable with WinRT.
-public protocol WinRTExport: COMExport, IInspectableProtocol {}
-
-extension WinRTExport {
-    public func getIids() throws -> [IID] {
-        Self.projections.map { $0.iid }
-    }
-
-    public func getRuntimeClassName() throws -> String {
-        String(describing: Self.self)
-    }
-
-    public func getTrustLevel() throws -> CWinRT.TrustLevel {
-        CWinRT.BaseTrust
-    }
-}

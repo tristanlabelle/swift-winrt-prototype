@@ -1,7 +1,12 @@
 import WindowsRuntime
 import UWP_WindowsStorageStreams
 
-internal final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAccessProtocol {
+internal final class SwiftBuffer: WinRTExport<IBufferProjection>, IBufferProtocol, IBufferByteAccessProtocol {
+    public override class var queriableInterfaces: [QueriableInterface] { [
+        .init(IBufferProjection.self),
+        .init(IBufferByteAccessProjection.self)
+    ] }
+
     let bufferPointer: UnsafeMutableBufferPointer<UInt8>
 
     init(_ array: [UInt8]) {
@@ -12,19 +17,6 @@ internal final class SwiftBuffer: WinRTExport, IBufferProtocol, IBufferByteAcces
     deinit {
         bufferPointer.deallocate()
     }
-
-    private weak var _identity: COMWrapper<IBufferProjection>?
-    public func _getWeakIdentity() -> COMWrapper<IBufferProjection> {
-        if let identity = _identity { return identity }
-        let identity = COMWrapper<IBufferProjection>.createNewIdentity(implementation: self)
-        _identity = identity
-        return identity
-    }
-
-    public static let projections: [any COMTwoWayProjection.Type] = [
-        IBufferProjection.self,
-        IBufferByteAccessProjection.self
-    ]
 
     public var capacity: UInt32 { get throws { UInt32(bufferPointer.count) } }
     public var length: UInt32 { get throws { UInt32(bufferPointer.count) } }

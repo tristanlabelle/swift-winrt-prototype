@@ -68,31 +68,3 @@ extension COMProjection {
 public protocol COMTwoWayProjection: COMProjection {
     static var _vtable: CVTablePointer { get }
 }
-
-// Implemented by a Swift class that should be interoperable with COM.
-public protocol COMExport: IUnknownProtocol {
-    associatedtype DefaultProjection: COMTwoWayProjection
-
-    // Provides identity for the COM projection of a Swift object.
-    // This is what QueryInterface(IUnknown/IInspectable) returns.
-    // Should be backed by a weak field that is initialized just-in-time.
-    func _getWeakIdentity() -> COMWrapper<DefaultProjection>
-
-    static var projections: [any COMTwoWayProjection.Type] { get }
-}
-
-extension COMExport {
-    public func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
-        switch iid {
-            case IUnknownProjection.iid, DefaultProjection.iid:
-                return _getWeakIdentity().unknownPointer.withAddedRef()
-
-            case IInspectableProjection.iid:
-                guard _getWeakIdentity().isInspectable else { throw COMError.noInterface }
-                return _getWeakIdentity().unknownPointer.withAddedRef()
-
-            default:
-                fatalError()
-        }
-    }
-}

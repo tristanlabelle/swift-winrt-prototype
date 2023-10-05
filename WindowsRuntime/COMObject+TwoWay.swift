@@ -2,12 +2,12 @@ import CWinRT
 
 extension COMObjectBase where Projection: COMTwoWayProjection {
     public static func _getImplementation(_ pointer: Projection.CPointer) -> Projection.SwiftType {
-        COMWrapper<Projection>.from(pointer).implementation
+        COMExport<Projection>.from(pointer) as! Projection.SwiftType
     }
 
     public static func _getImplementation(_ pointer: Projection.CPointer?) -> Projection.SwiftType? {
         guard let pointer else { return nil }
-        return COMWrapper<Projection>.from(pointer).implementation
+        return (COMExport<Projection>.from(pointer) as! Projection.SwiftType)
     }
 
     public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftType) throws -> Void) -> HRESULT {
@@ -38,18 +38,18 @@ extension COMObjectBase where Projection: COMTwoWayProjection {
         guard let this, let iid else { return COMError.invalidArg.hr }
 
         return COMError.catch {
-            let unknownWithRef = try COMWrapper<Projection>.queryInterface(this, iid.pointee)
+            let unknownWithRef = try COMExport<Projection>.queryInterface(this, iid.pointee)
             ppvObject.pointee = UnsafeMutableRawPointer(unknownWithRef)
         }
     }
 
     public static func _addRef(_ this: Projection.CPointer?) -> UInt32 {
         guard let this else { return 0 }
-        return COMWrapper<Projection>.addRef(this)
+        return COMExport<Projection>.addRef(this)
     }
 
     public static func _release(_ this: Projection.CPointer?) -> UInt32 {
         guard let this else { return 0 }
-        return COMWrapper<Projection>.release(this)
+        return COMExport<Projection>.release(this)
     }
 }
