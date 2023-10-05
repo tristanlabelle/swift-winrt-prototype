@@ -5,7 +5,7 @@ import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
 import WindowsRuntime
 
-internal final class ProjectionTests: WinRTTestCase {
+internal final class ProjectionImportTests: WinRTTestCase {
     func testActivationFactory() throws {
         let provider = try HashAlgorithmProvider.openAlgorithm("SHA256")
         XCTAssertEqual(try provider.hashLength, 32)
@@ -27,5 +27,21 @@ internal final class ProjectionTests: WinRTTestCase {
         let asyncOperation = try ErrorDetails.createFromHResultAsync(COMError.fail.hr)
         let asyncInfo = try asyncOperation.queryInterface(IAsyncInfoProjection.self)
         XCTAssertEqual(try asyncInfo.status, .started)
+    }
+
+    func testRefCountsThroughQueryInterface() throws {
+        // HashAlgorithmProvider instances from openAlgorithm could be cached, 
+        // but it wouldn't make sense for IBuffer instances
+        let buffer = try HashAlgorithmProvider.openAlgorithm("SHA256").createHash().getValueAndReset()
+        XCTAssertEqual(COMObject._getUnsafeRefCount(buffer), 1)
+
+        do {
+            // Assume that the different COM interfaces share the same refcount
+            let bufferByteAccess = try buffer.queryInterface(IBufferByteAccessProjection.self)
+            XCTAssertEqual(COMObject._getUnsafeRefCount(buffer), 2)
+            XCTAssertEqual(COMObject._getUnsafeRefCount(bufferByteAccess), 2)
+        }
+
+        XCTAssertEqual(COMObject._getUnsafeRefCount(buffer), 1)
     }
 }

@@ -3,7 +3,7 @@ import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
 import WindowsRuntime
 
-internal final class QueryInterfaceTests: WinRTTestCase {
+internal final class ProjectionExportTests: WinRTTestCase {
     func testIUnknownIdentityRule() throws {
         let swiftBuffer = SwiftBuffer([1, 2, 3])
         let bufferByteAccess = try swiftBuffer.queryInterface(IBufferByteAccessProjection.self)
