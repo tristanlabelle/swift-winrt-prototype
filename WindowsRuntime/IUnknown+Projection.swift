@@ -6,8 +6,8 @@ public final class IUnknownProjection: COMObjectBase<IUnknownProjection>, COMTwo
     public typealias CVTableStruct = CWinRT.IUnknownVtbl
 
     public static let iid = IID(0x00000000, 0x0000, 0x0000, 0xC000, 0x000000000046)
-    public static var _vtable: CVTablePointer { withUnsafePointer(to: &_vtableStruct) { $0 } }
-    private static var _vtableStruct: CVTableStruct = .init(
+    public static var vtable: CVTablePointer { withUnsafePointer(to: &vtableStruct) { $0 } }
+    private static var vtableStruct: CVTableStruct = .init(
         QueryInterface: { this, iid, ppvObject in _queryInterface(this, iid, ppvObject) },
         AddRef: { this in _addRef(this) },
         Release: { this in _release(this) }

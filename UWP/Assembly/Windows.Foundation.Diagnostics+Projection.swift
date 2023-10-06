@@ -24,7 +24,7 @@ internal final class WindowsFoundationDiagnostics_IErrorDetailsStatics:
 
     public func createFromHResultAsync(_ errorCode: HResult) throws -> WindowsFoundation_IAsyncOperation<WindowsFoundationDiagnostics_ErrorDetails> {
         var result: WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.CPointer?
-        try HResult.throwIfFailed(_vtable.CreateFromHResultAsync(_pointer, errorCode.value, &result))
+        try HResult.throwIfFailed(vtable.CreateFromHResultAsync(pointer, errorCode.value, &result))
         return try NullResult.unwrap(WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.toSwiftAndCleanup(result))
     }
 }

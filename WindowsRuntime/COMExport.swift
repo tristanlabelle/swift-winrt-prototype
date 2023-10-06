@@ -80,7 +80,7 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
 
     private struct CStruct {
         /// Virtual function table called by COM
-        public let vtable: Projection.CVTablePointer = Projection._vtable
+        public let vtable: Projection.CVTablePointer = Projection.vtable
         public var this: Unmanaged<COMExport<Projection>>! = nil
     }
 

@@ -2,14 +2,13 @@ import CWinRT
 
 // A type which converts between a COM interface and a corresponding Swift value.
 public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == CPointer {
-    associatedtype SwiftType
     associatedtype CStruct
     associatedtype CVTableStruct
     typealias CPointer = UnsafeMutablePointer<CStruct>
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
     var swiftValue: SwiftType { get }
-    var _pointer: CPointer { get }
+    var pointer: CPointer { get }
 
     init(transferringRef pointer: CPointer)
 
@@ -17,13 +16,13 @@ public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == 
 }
 
 extension COMProjection {
-    public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
-        _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
+    public var unknownPointer: UnsafeMutablePointer<CWinRT.IUnknown> {
+        pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
 
-    public var _vtable: CVTableStruct {
+    public var vtable: CVTableStruct {
         _read {
-            let unknownVTable = UnsafePointer(_unknown.pointee.lpVtbl!)
+            let unknownVTable = UnsafePointer(unknownPointer.pointee.lpVtbl!)
             let pointer = unknownVTable.withMemoryRebound(to: CVTableStruct.self, capacity: 1) { $0 }
             yield pointer.pointee
         }
@@ -31,7 +30,7 @@ extension COMProjection {
 
     public init(_ pointer: CPointer) {
         self.init(transferringRef: pointer)
-        _unknown.addRef()
+        unknownPointer.addRef()
     }
 
     public static func toSwiftAndCleanup(_ value: ABIType) -> SwiftType {
@@ -45,8 +44,8 @@ extension COMProjection {
     public static func toABI(_ value: SwiftType) throws -> ABIType {
         switch value {
             case let object as COMObjectBase<Self>:
-                object._unknown.addRef()
-                return object._pointer
+                object.unknownPointer.addRef()
+                return object.pointer
 
             case let unknown as IUnknown:
                 return try unknown._queryInterfacePointer(Self.self)
@@ -65,5 +64,5 @@ extension COMProjection {
 
 // Protocol for strongly-typed two-way COM interface projections into and from Swift.
 public protocol COMTwoWayProjection: COMProjection {
-    static var _vtable: CVTablePointer { get }
+    static var vtable: CVTablePointer { get }
 }

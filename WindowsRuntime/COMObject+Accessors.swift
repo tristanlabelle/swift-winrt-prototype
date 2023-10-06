@@ -4,7 +4,7 @@ extension COMObjectBase {
     public func _getter<Value>(_ function: (Projection.CPointer, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
         try withUnsafeTemporaryAllocation(of: Value.self, capacity: 1) { valueBuffer in
             let valuePointer = valueBuffer.baseAddress!
-            try HResult.throwIfFailed(function(_pointer, valuePointer))
+            try HResult.throwIfFailed(function(pointer, valuePointer))
             return valuePointer.pointee
         }
     }
@@ -26,7 +26,7 @@ extension COMObjectBase {
     }
 
     public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {
-        try HResult.throwIfFailed(function(_pointer, value))
+        try HResult.throwIfFailed(function(pointer, value))
     }
 
     public func _objectSetter<ValueProjection: COMProjection>(
@@ -36,10 +36,10 @@ extension COMObjectBase {
         if let value {
             let pointerWithRef = try value._queryInterfacePointer(ValueProjection.self)
             defer { _ = pointerWithRef.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
-            try HResult.throwIfFailed(function(_pointer, pointerWithRef))
+            try HResult.throwIfFailed(function(pointer, pointerWithRef))
         }
         else {
-            try HResult.throwIfFailed(function(_pointer, nil))
+            try HResult.throwIfFailed(function(pointer, nil))
         }
     }
 }

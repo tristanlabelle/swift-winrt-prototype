@@ -2,7 +2,7 @@ import CWinRT
 
 open class WinRTObject<Projection: WinRTProjection>: COMObjectBase<Projection>, IInspectableProtocol {
     public var _inspectable: UnsafeMutablePointer<CWinRT.IInspectable> {
-        _pointer.withMemoryRebound(to: CWinRT.IInspectable.self, capacity: 1) { $0 }
+        pointer.withMemoryRebound(to: CWinRT.IInspectable.self, capacity: 1) { $0 }
     }
 
     public func getIids() throws -> [IID] {
