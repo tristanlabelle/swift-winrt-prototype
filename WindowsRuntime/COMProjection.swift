@@ -8,6 +8,7 @@ public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == 
     typealias CPointer = UnsafeMutablePointer<CStruct>
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
+    var swiftValue: SwiftType { get }
     var _pointer: CPointer { get }
 
     init(transferringRef pointer: CPointer)
@@ -16,8 +17,6 @@ public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == 
 }
 
 extension COMProjection {
-    public var abiValue: ABIType { _pointer }
-
     public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
         _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
@@ -35,8 +34,12 @@ extension COMProjection {
         _unknown.addRef()
     }
 
-    public init(cleaningUp pointer: CPointer) {
-        self.init(transferringRef: pointer)
+    public static func toSwiftAndCleanup(_ value: ABIType) -> SwiftType {
+        Self(transferringRef: value).swiftValue
+    }
+
+    public static func toSwift(_ value: ABIType) -> SwiftType {
+        Self(value).swiftValue
     }
 
     public static func toABI(_ value: SwiftType) throws -> ABIType {

@@ -3,14 +3,8 @@ public protocol ABIProjection {
     associatedtype SwiftType
     associatedtype ABIType
 
-    /// Gets the Swift representation of the value.
-    var swiftValue: SwiftType { get }
-
-    /// Gets the ABI representation of the value.
-    var abiValue: ABIType { get }
-
-    /// Creates the projection of a given ABI value.
-    init(_ value: ABIType)
+    /// Converts a value from its ABI to its Swift representation.
+    static func toSwift(_ value: ABIType) -> SwiftType
 
     /// Converts a value from its Swift to its ABI representation.
     /// The resulting value should be cleaned up as its creation might have allocated resources.
@@ -21,27 +15,19 @@ public protocol ABIProjection {
 }
 
 extension ABIProjection {
-    public init(cleaningUp value: ABIType) {
-        self.init(value)
-        Self.cleanup(value)
-    }
-
-    public static func toSwift(_ value: ABIType) -> SwiftType {
-        Self(value).swiftValue
-    }
-
     public static func toSwift(_ value: ABIType?) -> SwiftType? {
         guard let value else { return nil }
-        return Self(value).swiftValue
+        return Optional(toSwift(value))
     }
 
     public static func toSwiftAndCleanup(_ value: ABIType) -> SwiftType {
-        Self(cleaningUp: value).swiftValue
+        defer { cleanup(value) }
+        return toSwift(value)
     }
 
     public static func toSwiftAndCleanup(_ value: ABIType?) -> SwiftType? {
         guard let value else { return nil }
-        return Self(cleaningUp: value).swiftValue
+        return Optional(toSwiftAndCleanup(value))
     }
 
     public static func cleanup(_ value: ABIType?) {
