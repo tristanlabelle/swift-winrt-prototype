@@ -1,4 +1,4 @@
-public enum NullableProjection<Inner: ABIProjection>: ABIProjection {
+public enum OptionalProjection<Inner: ABIProjection>: ABIProjection {
     public typealias SwiftValue = Inner.SwiftValue?
     public typealias ABIValue = Inner.ABIValue?
 

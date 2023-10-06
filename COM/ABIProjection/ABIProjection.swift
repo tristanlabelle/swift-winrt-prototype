@@ -33,6 +33,11 @@ extension ABIProjection {
         return Optional(toSwift(copying: value))
     }
 
+    public static func toABI(_ value: SwiftValue?) throws -> ABIValue? {
+        guard let value else { return nil }
+        return Optional(try toABI(value))
+    }
+
     public static func release(_ value: ABIValue?) {
         if let value { release(value) }
     }
