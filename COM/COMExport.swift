@@ -3,20 +3,21 @@ import CWinRT
 // Base class for Swift objects exported to COM
 public protocol COMExportProtocol: IUnknownProtocol {
     var unknown: IUnknownPointer { get }
+    var anyImplementation: Any { get }
     var identity: any COMExportProtocol { get }
     var queriableInterfaces: [COMExportInterface] { get }
 }
 
 public struct COMExportInterface {
     public let iid: IID
-    public let queryPointer: (_: any COMExportProtocol) throws -> IUnknownPointer
+    public let queryPointer: (_ identity: any COMExportProtocol) throws -> IUnknownPointer
 
     public init<TargetProjection: COMTwoWayProjection>(_: TargetProjection.Type) {
         self.iid = TargetProjection.iid
-        self.queryPointer = { this in
+        self.queryPointer = { identity in
             let export = COMExport<TargetProjection>(
-                implementation: this as! TargetProjection.SwiftValue,
-                identity: this)
+                implementation: identity.anyImplementation as! TargetProjection.SwiftValue,
+                identity: identity)
             return export.unknown.addingRef()
         }
     }
@@ -37,6 +38,7 @@ open class COMExport<Projection: COMTwoWayProjection>: COMExportProtocol, IUnkno
     private var cstruct: CStruct
     private let identityData: IdentityData
     public let implementation: Projection.SwiftValue
+    public var anyImplementation: Any { implementation }
 
     public init(implementation: Projection.SwiftValue, queriableInterfaces: [COMExportInterface]) {
         self.cstruct = CStruct()
