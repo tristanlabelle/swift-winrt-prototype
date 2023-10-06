@@ -1,5 +1,5 @@
 public protocol EnumProjection: Hashable, ABIInertProjection 
-    where ABIType == CEnum, SwiftType == Self {
+    where ABIValue == CEnum, SwiftValue == Self {
     associatedtype CEnum: RawRepresentable where CEnum.RawValue: FixedWidthInteger & Hashable
 
     var value: CEnum.RawValue { get }

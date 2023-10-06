@@ -1,16 +1,16 @@
 import CWinRT
 
 extension COMProjectionBase where Projection: COMTwoWayProjection {
-    public static func _getImplementation(_ pointer: Projection.CPointer) -> Projection.SwiftType {
-        COMExport<Projection>.from(pointer) as! Projection.SwiftType
+    public static func _getImplementation(_ pointer: Projection.CPointer) -> Projection.SwiftValue {
+        COMExport<Projection>.from(pointer) as! Projection.SwiftValue
     }
 
-    public static func _getImplementation(_ pointer: Projection.CPointer?) -> Projection.SwiftType? {
+    public static func _getImplementation(_ pointer: Projection.CPointer?) -> Projection.SwiftValue? {
         guard let pointer else { return nil }
-        return (COMExport<Projection>.from(pointer) as! Projection.SwiftType)
+        return (COMExport<Projection>.from(pointer) as! Projection.SwiftValue)
     }
 
-    public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftType) throws -> Void) -> HRESULT {
+    public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftValue) throws -> Void) -> HRESULT {
         guard let this else {
             assertionFailure("COM this pointer was null")
             return HResult.invalidArg.value
@@ -21,7 +21,7 @@ extension COMProjectionBase where Projection: COMTwoWayProjection {
     public static func _getter<Value>(
             _ this: Projection.CPointer?,
             _ value: UnsafeMutablePointer<Value>?,
-            _ code: (Projection.SwiftType) throws -> Value) -> HRESULT {
+            _ code: (Projection.SwiftValue) throws -> Value) -> HRESULT {
         _implement(this) {
             guard let value else { throw HResult.Error.invalidArg }
             value.pointee = try code($0)

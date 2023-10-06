@@ -4,7 +4,7 @@ import WindowsRuntime
 extension WindowsFoundation_AsyncOperationCompletedHandlerProjection where TResult == WindowsFoundationDiagnostics_ErrorDetails {
     internal final class Instance: WinRTProjectionBase<Instance>, WinRTProjection {
         public typealias TResult = WindowsFoundationDiagnostics_ErrorDetails
-        public typealias SwiftType = WindowsFoundation_AsyncOperationCompletedHandler<TResult>
+        public typealias SwiftValue = WindowsFoundation_AsyncOperationCompletedHandler<TResult>
         public typealias CStruct = CWinRT.__FIAsyncOperationCompletedHandler_1_Windows__CFoundation__CDiagnostics__CErrorDetails
         public typealias CVTableStruct = CWinRT.__FIAsyncOperationCompletedHandler_1_Windows__CFoundation__CDiagnostics__CErrorDetailsVtbl
 
@@ -16,7 +16,7 @@ extension WindowsFoundation_AsyncOperationCompletedHandlerProjection where TResu
 extension WindowsFoundation_IAsyncOperationProjection where TResult == WindowsFoundationDiagnostics_ErrorDetails {
     internal final class Instance: WinRTProjectionBase<Instance>, WinRTProjection, WindowsFoundation_IAsyncOperationProtocol {
         public typealias TResult = WindowsFoundationDiagnostics_ErrorDetails
-        public typealias SwiftType = WindowsFoundation_IAsyncOperation<TResult>
+        public typealias SwiftValue = WindowsFoundation_IAsyncOperation<TResult>
         public typealias CStruct = CWinRT.__FIAsyncOperation_1_Windows__CFoundation__CDiagnostics__CErrorDetails
         public typealias CVTableStruct = CWinRT.__FIAsyncOperation_1_Windows__CFoundation__CDiagnostics__CErrorDetailsVtbl
 

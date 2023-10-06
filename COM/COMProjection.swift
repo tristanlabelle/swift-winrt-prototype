@@ -1,13 +1,13 @@
 import CWinRT
 
 // A type which projects a COM interface to a corresponding Swift value.
-public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == CPointer {
+public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIValue == CPointer {
     associatedtype CStruct
     associatedtype CVTableStruct
     typealias CPointer = UnsafeMutablePointer<CStruct>
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
-    var swiftValue: SwiftType { get }
+    var swiftValue: SwiftValue { get }
     var _pointer: CPointer { get }
 
     init(transferringRef pointer: CPointer)
@@ -35,15 +35,15 @@ extension COMProjection {
         self.init(transferringRef: pointer)
     }
 
-    public static func toSwift(copying value: ABIType) -> SwiftType {
+    public static func toSwift(copying value: ABIValue) -> SwiftValue {
         Self(value).swiftValue
     }
 
-    public static func toSwift(consuming value: ABIType) -> SwiftType {
+    public static func toSwift(consuming value: ABIValue) -> SwiftValue {
         Self(transferringRef: value).swiftValue
     }
 
-    public static func toABI(_ value: SwiftType) throws -> ABIType {
+    public static func toABI(_ value: SwiftValue) throws -> ABIValue {
         switch value {
             case let object as COMProjectionBase<Self>:
                 return IUnknownPointer.addingRef(object._pointer)
@@ -52,7 +52,7 @@ extension COMProjection {
                 return try unknown._queryInterfacePointer(Self.self)
 
             default:
-                throw ABIProjectionError.unsupported(SwiftType.self)
+                throw ABIProjectionError.unsupported(SwiftValue.self)
         }
     }
 

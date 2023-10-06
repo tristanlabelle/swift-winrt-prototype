@@ -1,7 +1,7 @@
 import CWinRT
 
 public final class IUnknownProjection: COMProjectionBase<IUnknownProjection>, COMTwoWayProjection {
-    public typealias SwiftType = IUnknown
+    public typealias SwiftValue = IUnknown
     public typealias CStruct = CWinRT.IUnknown
     public typealias CVTableStruct = CWinRT.IUnknownVtbl
 

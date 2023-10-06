@@ -10,7 +10,7 @@ public enum WindowsFoundation_AsyncOperationCompletedHandlerProjection<TResult> 
 
 public final class WindowsFoundation_IAsyncInfoProjection:
         WinRTProjectionBase<WindowsFoundation_IAsyncInfoProjection>, WinRTProjection, WindowsFoundation_IAsyncInfoProtocol {
-    public typealias SwiftType = WindowsFoundation_IAsyncInfo
+    public typealias SwiftValue = WindowsFoundation_IAsyncInfo
     public typealias CStruct = CWinRT.IAsyncInfo
     public typealias CVTableStruct = CWinRT.IAsyncInfoVtbl
 

@@ -1,23 +1,23 @@
 public enum NullableProjection<Inner: ABIProjection>: ABIProjection {
-    public typealias SwiftType = Inner.SwiftType?
-    public typealias ABIType = Inner.ABIType?
+    public typealias SwiftValue = Inner.SwiftValue?
+    public typealias ABIValue = Inner.ABIValue?
 
-    public static func toSwift(copying value: Inner.ABIType?) -> Inner.SwiftType? {
+    public static func toSwift(copying value: Inner.ABIValue?) -> Inner.SwiftValue? {
         guard let value else { return nil }
         return Inner.toSwift(copying: value)
     }
 
-    public static func toSwift(consuming value: Inner.ABIType?) -> Inner.SwiftType? {
+    public static func toSwift(consuming value: Inner.ABIValue?) -> Inner.SwiftValue? {
         guard let value else { return nil }
         return Inner.toSwift(consuming: value)
     }
 
-    public static func toABI(_ value: Inner.SwiftType?) throws -> Inner.ABIType? {
+    public static func toABI(_ value: Inner.SwiftValue?) throws -> Inner.ABIValue? {
         guard let value else { return nil }
         return try Inner.toABI(value)
     }
 
-    public static func release(_ value: Inner.ABIType?) {
+    public static func release(_ value: Inner.ABIValue?) {
         if let value { Inner.release(value) }
     }
 }

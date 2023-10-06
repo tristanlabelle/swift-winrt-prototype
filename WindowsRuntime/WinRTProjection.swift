@@ -10,7 +10,7 @@ public protocol WinRTProjection: COMProjection, IInspectableProtocol {
 public protocol WinRTTwoWayProjection: WinRTProjection, COMTwoWayProjection {}
 
 extension WinRTProjection {
-    public static func _getActivationFactory<Factory: WinRTProjection>(_: Factory.Type) throws -> Factory.SwiftType {
+    public static func _getActivationFactory<Factory: WinRTProjection>(_: Factory.Type) throws -> Factory.SwiftValue {
         let activatableId = try HSTRING.create(Self.runtimeClassName)
         defer { HSTRING.delete(activatableId) }
         var iid = Factory.iid

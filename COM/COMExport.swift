@@ -90,7 +90,7 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
         public init<TargetProjection: COMTwoWayProjection>(_: TargetProjection.Type) {
             self.iid = TargetProjection.iid
             self.queryPointer = { this in
-                let export = COMSecondaryExport<TargetProjection>(implementation: this as! TargetProjection.SwiftType)
+                let export = COMSecondaryExport<TargetProjection>(implementation: this as! TargetProjection.SwiftValue)
                 return export.unknownPointer.addingRef()
             }
         }
@@ -98,9 +98,9 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
 }
 
 internal final class COMSecondaryExport<Projection: COMTwoWayProjection>: COMExport<Projection> {
-    private let implementation: Projection.SwiftType
+    private let implementation: Projection.SwiftValue
 
-    public init(implementation: Projection.SwiftType) {
+    public init(implementation: Projection.SwiftValue) {
         self.implementation = implementation
     }
 
