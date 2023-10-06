@@ -24,7 +24,7 @@ public final class WindowsStorageStreams_IBufferProjection:
         put_Length: { this, value in _implement(this) { try $0.length(value) } }
     )
 
-    public var capacity: UInt32 { get throws { try _getter(vtable.get_Capacity) } }
-    public var length: UInt32 { get throws { try _getter(vtable.get_Length) } }
-    public func length(_ value: UInt32) throws { try _setter(vtable.put_Length, value) }
+    public var capacity: UInt32 { get throws { try _getter(_vtable.get_Capacity) } }
+    public var length: UInt32 { get throws { try _getter(_vtable.get_Length) } }
+    public func length(_ value: UInt32) throws { try _setter(_vtable.put_Length, value) }
 }

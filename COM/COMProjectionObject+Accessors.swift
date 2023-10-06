@@ -4,7 +4,7 @@ extension COMProjectionObject {
     public func _getter<Value>(_ function: (Projection.CPointer, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
         try withUnsafeTemporaryAllocation(of: Value.self, capacity: 1) { valueBuffer in
             let valuePointer = valueBuffer.baseAddress!
-            try HResult.throwIfFailed(function(pointer, valuePointer))
+            try HResult.throwIfFailed(function(_pointer, valuePointer))
             return valuePointer.pointee
         }
     }
@@ -22,7 +22,7 @@ extension COMProjectionObject {
     }
 
     public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {
-        try HResult.throwIfFailed(function(pointer, value))
+        try HResult.throwIfFailed(function(_pointer, value))
     }
 
     public func _setter<ValueProjection: COMProjection>(
@@ -39,12 +39,12 @@ extension COMProjectionObject {
             _ value: ValueProjection.SwiftType?,
             _: ValueProjection.Type) throws where ValueProjection.SwiftType: IUnknownProtocol {
         if let value {
-            let pointerWithRef = try value._queryInterfacePointer(ValueProjection.self)
-            defer { _ = IUnknownPointer.release(pointerWithRef) }
-            try HResult.throwIfFailed(function(pointer, pointerWithRef))
+            let value = try value._queryInterfacePointer(ValueProjection.self)
+            defer { _ = IUnknownPointer.release(value) }
+            try HResult.throwIfFailed(function(_pointer, value))
         }
         else {
-            try HResult.throwIfFailed(function(pointer, nil))
+            try HResult.throwIfFailed(function(_pointer, nil))
         }
     }
 }

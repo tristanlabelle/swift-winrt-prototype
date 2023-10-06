@@ -34,7 +34,7 @@ internal final class WindowsSecurityCryptographyCore_HashAlgorithmProviderStatic
         let algorithm = try HSTRING.create(algorithm)
         defer { HSTRING.delete(algorithm) }
         var value: WindowsSecurityCryptographyCore_HashAlgorithmProvider.CPointer?
-        try HResult.throwIfFailed(vtable.OpenAlgorithm(pointer, algorithm, &value))
+        try HResult.throwIfFailed(_vtable.OpenAlgorithm(_pointer, algorithm, &value))
         return try NullResult.unwrap(WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(consuming: value))
     }
 

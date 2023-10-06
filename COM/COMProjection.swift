@@ -8,7 +8,7 @@ public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == 
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
     var swiftValue: SwiftType { get }
-    var pointer: CPointer { get }
+    var _pointer: CPointer { get }
 
     init(transferringRef pointer: CPointer)
 
@@ -16,21 +16,21 @@ public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == 
 }
 
 extension COMProjection {
-    public var unknownPointer: IUnknownPointer {
-        IUnknownPointer.cast(pointer)
+    public var _unknown: IUnknownPointer {
+        IUnknownPointer.cast(_pointer)
     }
 
-    public var vtable: CVTableStruct {
+    public var _vtable: CVTableStruct {
         _read {
-            let unknownVTable = UnsafePointer(unknownPointer.pointee.lpVtbl!)
+            let unknownVTable = UnsafePointer(_unknown.pointee.lpVtbl!)
             let pointer = unknownVTable.withMemoryRebound(to: CVTableStruct.self, capacity: 1) { $0 }
             yield pointer.pointee
         }
     }
 
     public init(_ pointer: CPointer) {
+        IUnknownPointer.addRef(pointer)
         self.init(transferringRef: pointer)
-        unknownPointer.addRef()
     }
 
     public static func toSwift(copying value: ABIType) -> SwiftType {
@@ -44,8 +44,7 @@ extension COMProjection {
     public static func toABI(_ value: SwiftType) throws -> ABIType {
         switch value {
             case let object as COMProjectionObject<Self>:
-                object.unknownPointer.addRef()
-                return object.pointer
+                return IUnknownPointer.addingRef(object._pointer)
 
             case let unknown as IUnknown:
                 return try unknown._queryInterfacePointer(Self.self)

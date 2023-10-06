@@ -8,14 +8,14 @@ extension IUnknownPointer {
         self.pointee.lpVtbl.pointee.AddRef(self)
     }
 
+    public func addingRef() -> IUnknownPointer {
+        self.addRef()
+        return self
+    }
+
     @discardableResult
     public func release() -> UInt32 {
         self.pointee.lpVtbl.pointee.Release(self)
-    }
-
-    public func withAddedRef() -> IUnknownPointer {
-        self.addRef()
-        return self
     }
 
     public func queryInterface<Interface>(_ iid: IID, _ type: Interface.Type) throws -> UnsafeMutablePointer<Interface> {
@@ -51,6 +51,11 @@ extension IUnknownPointer {
         cast(pointer).addRef()
     }
 
+    public static func addingRef(_ pointer: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer {
+        addRef(pointer)
+        return pointer
+    }
+
     @discardableResult
     public static func release(_ pointer: UnsafeMutableRawPointer) -> UInt32 {
         cast(pointer).release()
@@ -64,6 +69,11 @@ extension IUnknownPointer {
     @discardableResult
     public static func addRef<Interface>(_ pointer: UnsafeMutablePointer<Interface>) -> UInt32 {
         cast(pointer).addRef()
+    }
+
+    public static func addingRef<Interface>(_ pointer: UnsafeMutablePointer<Interface>) -> UnsafeMutablePointer<Interface> {
+        addRef(pointer)
+        return pointer
     }
 
     @discardableResult

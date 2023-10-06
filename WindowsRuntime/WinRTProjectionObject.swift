@@ -2,8 +2,8 @@ import CWinRT
 import COM
 
 open class WinRTProjectionObject<Projection: WinRTProjection>: COMProjectionObject<Projection>, IInspectableProtocol {
-    public var _inspectable: UnsafeMutablePointer<CWinRT.IInspectable> {
-        pointer.withMemoryRebound(to: CWinRT.IInspectable.self, capacity: 1) { $0 }
+    private var _inspectable: UnsafeMutablePointer<CWinRT.IInspectable> {
+        _pointer.withMemoryRebound(to: CWinRT.IInspectable.self, capacity: 1) { $0 }
     }
 
     public func getIids() throws -> [IID] {

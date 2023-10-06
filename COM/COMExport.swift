@@ -36,11 +36,11 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
     internal func _queryInterfacePointerImpl(_ iid: IID) throws -> IUnknownPointer {
         switch iid {
             case IUnknownProjection.iid, comExportIID, Projection.iid:
-                return unknownPointer.withAddedRef() // The current object is the identity
+                return unknownPointer.addingRef() // The current object is the identity
 
             // case IInspectableProjection.iid:
             //     guard isInspectable else { throw HResult.Error.noInterface }
-            //     return unknownPointer.withAddedRef()
+            //     return unknownPointer.addingRef()
 
             default:
                 guard let interface = Self.queriableInterfaces.first(where: { $0.iid == iid }) else { throw HResult.Error.noInterface }
@@ -91,7 +91,7 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
             self.iid = TargetProjection.iid
             self.queryPointer = { this in
                 let export = COMSecondaryExport<TargetProjection>(implementation: this as! TargetProjection.SwiftType)
-                return export.unknownPointer.withAddedRef()
+                return export.unknownPointer.addingRef()
             }
         }
     }
@@ -106,7 +106,7 @@ internal final class COMSecondaryExport<Projection: COMTwoWayProjection>: COMExp
 
     internal override func _queryInterfacePointerImpl(_ iid: IID) throws -> IUnknownPointer {
         switch iid {
-            case Projection.iid: return unknownPointer.withAddedRef()
+            case Projection.iid: return unknownPointer.addingRef()
             default:
                 // Delegate to the main export object
                 return try (implementation as! IUnknown)._queryInterfacePointer(iid)

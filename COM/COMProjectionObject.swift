@@ -1,20 +1,20 @@
 import CWinRT
 
 open class COMProjectionObjectBase: IUnknownProtocol {
-    public var unknownPointer: IUnknownPointer { fatalError() }
+    public var _unknownPointer: IUnknownPointer { fatalError() }
 
     fileprivate init() {}
 
     public var _unsafeRefCount: UInt32 {
-        let postAddRef = unknownPointer.addRef()
-        let postRelease = unknownPointer.release()
+        let postAddRef = _unknownPointer.addRef()
+        let postRelease = _unknownPointer.release()
         assert(postRelease + 1 == postAddRef,
             "Unexpected ref count change during _unsafeRefCount")
         return postRelease
     }
 
     public func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer {
-        try unknownPointer.queryInterface(iid)
+        try _unknownPointer.queryInterface(iid)
     }
 
     public static func _getUnsafeRefCount(_ object: IUnknown) -> UInt32 {
@@ -25,18 +25,18 @@ open class COMProjectionObjectBase: IUnknownProtocol {
 
 // Base class for COM objects projected into Swift.
 open class COMProjectionObject<Projection: COMProjection>: COMProjectionObjectBase {
-    public let pointer: Projection.CPointer
+    public let _pointer: Projection.CPointer
     public var swiftValue: Projection.SwiftType { self as! Projection.SwiftType }
 
     public required init(transferringRef pointer: Projection.CPointer) {
-        self.pointer = pointer
+        self._pointer = pointer
     }
 
     deinit {
-        _ = self.unknownPointer.release()
+        IUnknownPointer.release(_pointer)
     }
 
-    public override final var unknownPointer: IUnknownPointer {
-        IUnknownPointer.cast(pointer)
+    public override final var _unknownPointer: IUnknownPointer {
+        IUnknownPointer.cast(_pointer)
     }
 }

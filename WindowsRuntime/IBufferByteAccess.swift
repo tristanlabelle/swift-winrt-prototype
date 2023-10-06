@@ -22,5 +22,5 @@ public final class IBufferByteAccessProjection:
         Buffer: { this, value in _getter(this, value) { try $0.buffer } }
     )
 
-    public var buffer: UnsafeMutablePointer<UInt8> { get throws { try NullResult.unwrap(_getter(vtable.Buffer)) } }
+    public var buffer: UnsafeMutablePointer<UInt8> { get throws { try NullResult.unwrap(_getter(_vtable.Buffer)) } }
 }

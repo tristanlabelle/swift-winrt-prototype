@@ -10,8 +10,8 @@ internal final class ProjectionExportTests: WinRTTestCase {
         let bufferByteAccess = try swiftBuffer.queryInterface(IBufferByteAccessProjection.self)
         let buffer = try swiftBuffer.queryInterface(IBufferProjection.self)
         XCTAssertEqual(
-            try bufferByteAccess.queryInterface(IUnknownProjection.self).unknownPointer,
-            try buffer.queryInterface(IUnknownProjection.self).unknownPointer)
+            try bufferByteAccess.queryInterface(IUnknownProjection.self)._unknown,
+            try buffer.queryInterface(IUnknownProjection.self)._unknown)
     }
 
     func testTransitivityRule() throws {
