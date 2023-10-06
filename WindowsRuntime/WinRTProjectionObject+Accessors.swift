@@ -7,6 +7,6 @@ extension WinRTProjectionObject {
     }
 
     public func _stringGetter(_ function: (Projection.CPointer, UnsafeMutablePointer<CWinRT.HSTRING?>?) -> HRESULT) throws -> String {
-        HStringProjection.toSwift(consuming: try _getter(function))
+        try _getter(function, HStringProjection.self)
     }
 }

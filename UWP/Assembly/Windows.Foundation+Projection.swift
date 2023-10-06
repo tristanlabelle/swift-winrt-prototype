@@ -18,7 +18,7 @@ public final class WindowsFoundation_IAsyncInfoProjection:
     public static var runtimeClassName: String { "Windows.Foundation.IAsyncInfo" }
 
     public var id: UInt32 { get throws { try _getter(vtable.get_Id) } }
-    public var status: WindowsFoundation_AsyncStatus { get throws { try _enumGetter(vtable.get_Status) } }
+    public var status: WindowsFoundation_AsyncStatus { get throws { try _getter(vtable.get_Status, WindowsFoundation_AsyncStatus.self) } }
     public var errorCode: HResult { get throws { try HResult(_getter(vtable.get_ErrorCode)) } }
 
     public func cancel() throws { try HResult.throwIfFailed(vtable.Cancel(pointer)) }

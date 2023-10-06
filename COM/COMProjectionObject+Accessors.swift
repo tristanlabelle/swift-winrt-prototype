@@ -9,6 +9,12 @@ extension COMProjectionObject {
         }
     }
 
+    public func _getter<ValueProjection: ABIProjection>(
+            _ function: (Projection.CPointer, UnsafeMutablePointer<ValueProjection.ABIType>?) -> HRESULT,
+            _: ValueProjection.Type) throws -> ValueProjection.SwiftType {
+        return ValueProjection.toSwift(consuming: try _getter(function))
+    }
+
     public func _objectGetter<ValueProjection: COMProjection>(
             _ function: (Projection.CPointer, UnsafeMutablePointer<ValueProjection.CPointer?>?) -> HRESULT,
             _: ValueProjection.Type) throws -> ValueProjection.SwiftType {
@@ -17,6 +23,15 @@ extension COMProjectionObject {
 
     public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {
         try HResult.throwIfFailed(function(pointer, value))
+    }
+
+    public func _setter<ValueProjection: COMProjection>(
+            _ function: (Projection.CPointer, ValueProjection.ABIType) -> HRESULT,
+            _ value: ValueProjection.SwiftType,
+            _: ValueProjection.Type) throws {
+        let abiValue = try ValueProjection.toABI(value)
+        defer { ValueProjection.release(abiValue) }
+        try _setter(function, abiValue)
     }
 
     public func _objectSetter<ValueProjection: COMProjection>(
