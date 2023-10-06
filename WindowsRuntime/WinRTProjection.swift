@@ -15,11 +15,8 @@ extension WinRTProjection {
         defer { HSTRING.delete(activatableId) }
         var iid = Factory.iid
         var factory: UnsafeMutableRawPointer?
-        let hr = CWinRT.RoGetActivationFactory(activatableId, &iid, &factory)
-        let unknown = factory?.bindMemory(to: CWinRT.IUnknown.self, capacity: 1)
-        defer { _ = unknown?.pointee.lpVtbl.pointee.Release(unknown) }
-        try HResult.throwIfFailed(hr)
+        try HResult.throwIfFailed(CWinRT.RoGetActivationFactory(activatableId, &iid, &factory))
         guard let factory else { throw HResult.Error.noInterface }
-        return Factory.toSwift(copying: factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
+        return Factory.toSwift(consuming: factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
     }
 }

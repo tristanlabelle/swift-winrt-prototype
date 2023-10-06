@@ -29,17 +29,10 @@ extension IUnknownPointer {
     public func queryInterface<Interface>(_ iid: IID, _ type: Interface.Type) throws -> UnsafeMutablePointer<Interface> {
         var iid = iid
         var pointer: UnsafeMutableRawPointer? = nil
-        let hr = self.pointee.lpVtbl.pointee.QueryInterface(self, &iid, &pointer)
+        try HResult.throwIfFailed(self.pointee.lpVtbl.pointee.QueryInterface(self, &iid, &pointer))
         guard let pointer else {
-            try HResult.throwIfFailed(hr)
             assertionFailure("QueryInterface succeeded but returned a null pointer")
             throw HResult.Error.noInterface
-        }
-
-        if let error = HResult.Error(hresult: hr) {
-            assertionFailure("QueryInterface failed but returned a non-null pointer")
-            IUnknownPointer.release(pointer)
-            throw error
         }
 
         return pointer.bindMemory(to: Interface.self, capacity: 1)

@@ -31,8 +31,8 @@ internal final class WindowsSecurityCryptographyCore_HashAlgorithmProviderStatic
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderStaticsVtbl
 
     public func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider {
-        let algorithm = try HSTRING.create(algorithm)
-        defer { HSTRING.delete(algorithm) }
+        let algorithm = try HStringProjection.toABI(algorithm)
+        defer { HStringProjection.release(algorithm) }
         var value: WindowsSecurityCryptographyCore_HashAlgorithmProvider.CPointer?
         try HResult.throwIfFailed(_vtable.OpenAlgorithm(_pointer, algorithm, &value))
         return try NullResult.unwrap(WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(consuming: value))

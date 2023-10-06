@@ -9,10 +9,9 @@ open class WinRTProjectionBase<Projection: WinRTProjection>: COMProjectionBase<P
     public func getIids() throws -> [IID] {
         var count: UInt32 = 0
         var iids: UnsafeMutablePointer<IID>?
-        let hr = _inspectable.pointee.lpVtbl.pointee.GetIids(_inspectable, &count, &iids)
-        defer { CoTaskMemFree(UnsafeMutableRawPointer(iids)) }
-        try HResult.throwIfFailed(hr)
+        try HResult.throwIfFailed(_inspectable.pointee.lpVtbl.pointee.GetIids(_inspectable, &count, &iids))
         guard let iids else { throw HResult.Error.fail }
+        defer { CoTaskMemFree(UnsafeMutableRawPointer(iids)) }
         return Array(UnsafeBufferPointer(start: iids, count: Int(count)))
     }
 

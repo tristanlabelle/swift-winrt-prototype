@@ -4,7 +4,7 @@ import WindowsRuntime
 extension WindowsSecurityCryptographyCore_CryptographicHash {
     public func append(_ data: WindowsStorageStreams_IBuffer!) throws {
         let data = try data._queryInterfacePointer(WindowsStorageStreams_IBufferProjection.self)
-        defer { _ = data.pointee.lpVtbl.pointee.Release(data) }
+        defer { WindowsStorageStreams_IBufferProjection.release(data) }
         try HResult.throwIfFailed(_vtable.Append(_pointer, data))
     }
 
