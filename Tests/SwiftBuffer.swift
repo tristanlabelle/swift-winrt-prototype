@@ -2,10 +2,9 @@ import COM
 import WindowsRuntime
 import UWP_WindowsStorageStreams
 
-internal final class SwiftBuffer: WinRTExport<IBufferProjection>, IBufferProtocol, IBufferByteAccessProtocol {
-    public override class var queriableInterfaces: [QueriableInterface] { [
-        .init(IBufferProjection.self),
-        .init(IBufferByteAccessProjection.self)
+internal final class SwiftBuffer: WinRTExportBase<IBufferProjection>, IBufferProtocol, IBufferByteAccessProtocol {
+    override class var queriableInterfaces: [COMExportInterface] { [
+        .init(IBufferProjection.self), .init(IBufferByteAccessProjection.self)
     ] }
 
     let bufferPointer: UnsafeMutableBufferPointer<UInt8>
@@ -13,6 +12,7 @@ internal final class SwiftBuffer: WinRTExport<IBufferProjection>, IBufferProtoco
     init(_ array: [UInt8]) {
         bufferPointer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: array.count)
         _ = bufferPointer.initialize(from: array)
+        super.init()
     }
 
     deinit {

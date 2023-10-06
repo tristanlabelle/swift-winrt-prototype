@@ -1,11 +1,16 @@
 import CWinRT
 import COM
 
-open class WinRTExport<Projection: WinRTTwoWayProjection>: COMExport<Projection>, IInspectableProtocol {
-    public final func getIids() throws -> [IID] {
-        Self.queriableInterfaces.map { $0.iid }
+open class WinRTExport<Projection: WinRTTwoWayProjection>
+        : COMExport<Projection>, IInspectableProtocol
+        where Projection.SwiftValue: IInspectableProtocol {
+    public override func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer {
+        return iid == IInspectableProjection.iid
+            ? identity.unknown.addingRef()
+            : try super._queryInterfacePointer(iid)
     }
 
-    public func getRuntimeClassName() throws -> String { String(describing: Self.self) }
-    public func getTrustLevel() throws -> TrustLevel { CWinRT.BaseTrust }
+    public final func getIids() throws -> [IID] { queriableInterfaces.map { $0.iid } }
+    open func getRuntimeClassName() throws -> String { try implementation.getRuntimeClassName() }
+    open func getTrustLevel() throws -> TrustLevel { try implementation.getTrustLevel() }
 }

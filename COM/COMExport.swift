@@ -1,50 +1,94 @@
 import CWinRT
 
-internal let comExportIID = IID(0x7060261E, 0xB9B8, 0x4290, 0x968D, 0xDEC5D3E22A57)
-
 // Base class for Swift objects exported to COM
-open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
-    open class var queriableInterfaces: [QueriableInterface] { [] }
+public protocol COMExportProtocol: IUnknownProtocol {
+    var unknown: IUnknownPointer { get }
+    var identity: any COMExportProtocol { get }
+    var queriableInterfaces: [COMExportInterface] { get }
+}
 
-    private var cstruct: CStruct
+public struct COMExportInterface {
+    public let iid: IID
+    public let queryPointer: (_: any COMExportProtocol) throws -> IUnknownPointer
 
-    public init() {
-        cstruct = CStruct()
-        cstruct.object = Unmanaged.passUnretained(self)
+    public init<TargetProjection: COMTwoWayProjection>(_: TargetProjection.Type) {
+        self.iid = TargetProjection.iid
+        self.queryPointer = { this in
+            let export = COMExport<TargetProjection>(
+                implementation: this as! TargetProjection.SwiftValue,
+                identity: this)
+            return export.unknown.addingRef()
+        }
+    }
+}
+
+open class COMExport<Projection: COMTwoWayProjection>: COMExportProtocol, IUnknownProtocol {
+    private struct CStruct {
+        /// Virtual function table called by COM
+        public let vtable: Projection.CVTablePointer = Projection.vtable
+        public var object: Unmanaged<COMExport<Projection>>! = nil
     }
 
-    internal var pointer: Projection.CPointer {
+    private enum IdentityData {
+        case own(queriableInterfaces: [COMExportInterface])
+        case foreign(any COMExportProtocol)
+    }
+
+    private var cstruct: CStruct
+    private let identityData: IdentityData
+    public let implementation: Projection.SwiftValue
+
+    public init(implementation: Projection.SwiftValue, queriableInterfaces: [COMExportInterface]) {
+        self.cstruct = CStruct()
+        self.identityData = .own(queriableInterfaces: queriableInterfaces)
+        self.implementation = implementation
+        self.cstruct.object = Unmanaged.passUnretained(self)
+    }
+
+    fileprivate init(implementation: Projection.SwiftValue, identity: any COMExportProtocol) {
+        self.cstruct = CStruct()
+        self.identityData = .foreign(identity)
+        self.implementation = implementation
+        self.cstruct.object = Unmanaged.passUnretained(self)
+    }
+
+    public var pointer: Projection.CPointer {
         withUnsafeMutablePointer(to: &cstruct) {
             $0.withMemoryRebound(to: Projection.CStruct.self, capacity: 1) { $0 }
         }
     }
 
-    internal var unknownPointer: IUnknownPointer {
-        withUnsafeMutablePointer(to: &cstruct) {
-            IUnknownPointer.cast($0)
+    public var unknown: IUnknownPointer {
+        IUnknownPointer.cast(pointer)
+    }
+
+    public var identity: any COMExportProtocol {
+        switch identityData {
+            case .own: self
+            case .foreign(let other): other
         }
     }
 
-    // internal var isInspectable: Bool {
-    //     Projection.self is (any WinRTProjection.Type)
-    // }
-
-    public final func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer {
-        try _queryInterfacePointerImpl(iid)
+    public var queriableInterfaces: [COMExportInterface] {
+        switch identityData {
+            case .own(let queriableInterfaces): queriableInterfaces
+            case .foreign(let other): other.queriableInterfaces
+        }
     }
 
-    internal func _queryInterfacePointerImpl(_ iid: IID) throws -> IUnknownPointer {
-        switch iid {
-            case IUnknownProjection.iid, comExportIID, Projection.iid:
-                return unknownPointer.addingRef() // The current object is the identity
-
-            // case IInspectableProjection.iid:
-            //     guard isInspectable else { throw HResult.Error.noInterface }
-            //     return unknownPointer.addingRef()
-
-            default:
-                guard let interface = Self.queriableInterfaces.first(where: { $0.iid == iid }) else { throw HResult.Error.noInterface }
+    open func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer {
+        if iid == Projection.iid { return unknown.addingRef() }
+        
+        switch identityData {
+            case .own(let queriableInterfaces):
+                if iid == IUnknownProjection.iid { return unknown.addingRef() }
+                guard let interface = queriableInterfaces.first(where: { $0.iid == iid }) else {
+                    throw HResult.Error.noInterface
+                }
                 return try interface.queryPointer(self)
+
+            case .foreign(let target):
+                return try target._queryInterfacePointer(iid)
         }
     }
 
@@ -75,41 +119,5 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
 
     internal static func queryInterface(_ this: Projection.CPointer, _ iid: IID) throws -> IUnknownPointer {
         try cast(this).pointee.object.takeUnretainedValue()._queryInterfacePointer(iid)
-    }
-
-    private struct CStruct {
-        /// Virtual function table called by COM
-        public let vtable: Projection.CVTablePointer = Projection.vtable
-        public var object: Unmanaged<COMExport<Projection>>! = nil
-    }
-
-    public struct QueriableInterface {
-        public let iid: IID
-        public let queryPointer: (_: COMExport<Projection>) throws -> IUnknownPointer
-
-        public init<TargetProjection: COMTwoWayProjection>(_: TargetProjection.Type) {
-            self.iid = TargetProjection.iid
-            self.queryPointer = { this in
-                let export = COMSecondaryExport<TargetProjection>(implementation: this as! TargetProjection.SwiftValue)
-                return export.unknownPointer.addingRef()
-            }
-        }
-    }
-}
-
-internal final class COMSecondaryExport<Projection: COMTwoWayProjection>: COMExport<Projection> {
-    private let implementation: Projection.SwiftValue
-
-    public init(implementation: Projection.SwiftValue) {
-        self.implementation = implementation
-    }
-
-    internal override func _queryInterfacePointerImpl(_ iid: IID) throws -> IUnknownPointer {
-        switch iid {
-            case Projection.iid: return unknownPointer.addingRef()
-            default:
-                // Delegate to the main export object
-                return try (implementation as! IUnknown)._queryInterfacePointer(iid)
-        }
     }
 }
