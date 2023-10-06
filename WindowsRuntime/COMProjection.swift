@@ -43,7 +43,7 @@ extension COMProjection {
 
     public static func toABI(_ value: SwiftType) throws -> ABIType {
         switch value {
-            case let object as COMObjectBase<Self>:
+            case let object as COMProjectionObject<Self>:
                 object.unknownPointer.addRef()
                 return object.pointer
 

@@ -2,7 +2,8 @@ import CWinRT
 import WindowsRuntime
 
 public final class WindowsStorageStreams_IBufferProjection:
-        WinRTObject<WindowsStorageStreams_IBufferProjection>, WinRTTwoWayProjection, WindowsStorageStreams_IBufferProtocol {
+        WinRTProjectionObject<WindowsStorageStreams_IBufferProjection>, WinRTTwoWayProjection,
+        WindowsStorageStreams_IBufferProtocol {
     public typealias SwiftType = WindowsStorageStreams_IBuffer
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBuffer
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CStorage_CStreams_CIBufferVtbl

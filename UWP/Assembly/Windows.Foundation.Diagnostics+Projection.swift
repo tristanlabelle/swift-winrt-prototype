@@ -2,7 +2,7 @@ import CWinRT
 import WindowsRuntime
 
 public final class WindowsFoundationDiagnostics_ErrorDetails:
-        WinRTObject<WindowsFoundationDiagnostics_ErrorDetails>, WinRTProjection {
+        WinRTProjectionObject<WindowsFoundationDiagnostics_ErrorDetails>, WinRTProjection {
     public typealias SwiftType = WindowsFoundationDiagnostics_ErrorDetails
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetails
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetailsVtbl
@@ -14,7 +14,7 @@ public final class WindowsFoundationDiagnostics_ErrorDetails:
 }
 
 internal final class WindowsFoundationDiagnostics_IErrorDetailsStatics:
-        WinRTObject<WindowsFoundationDiagnostics_IErrorDetailsStatics>, WinRTProjection {
+        WinRTProjectionObject<WindowsFoundationDiagnostics_IErrorDetailsStatics>, WinRTProjection {
     public typealias SwiftType = WindowsFoundationDiagnostics_IErrorDetailsStatics
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetailsStatics
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetailsStaticsVtbl

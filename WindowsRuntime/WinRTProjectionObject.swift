@@ -1,6 +1,6 @@
 import CWinRT
 
-open class WinRTObject<Projection: WinRTProjection>: COMObjectBase<Projection>, IInspectableProtocol {
+open class WinRTProjectionObject<Projection: WinRTProjection>: COMProjectionObject<Projection>, IInspectableProtocol {
     public var _inspectable: UnsafeMutablePointer<CWinRT.IInspectable> {
         pointer.withMemoryRebound(to: CWinRT.IInspectable.self, capacity: 1) { $0 }
     }

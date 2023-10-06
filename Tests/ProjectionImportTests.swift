@@ -33,15 +33,15 @@ internal final class ProjectionImportTests: WinRTTestCase {
         // HashAlgorithmProvider instances from openAlgorithm could be cached, 
         // but it wouldn't make sense for IBuffer instances
         let buffer = try HashAlgorithmProvider.openAlgorithm("SHA256").createHash().getValueAndReset()
-        XCTAssertEqual(COMObject._getUnsafeRefCount(buffer), 1)
+        XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(buffer), 1)
 
         do {
             // Assume that the different COM interfaces share the same refcount
             let bufferByteAccess = try buffer.queryInterface(IBufferByteAccessProjection.self)
-            XCTAssertEqual(COMObject._getUnsafeRefCount(buffer), 2)
-            XCTAssertEqual(COMObject._getUnsafeRefCount(bufferByteAccess), 2)
+            XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(buffer), 2)
+            XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(bufferByteAccess), 2)
         }
 
-        XCTAssertEqual(COMObject._getUnsafeRefCount(buffer), 1)
+        XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(buffer), 1)
     }
 }

@@ -1,6 +1,6 @@
 import CWinRT
 
-public final class IInspectableProjection: WinRTObject<IInspectableProjection>, WinRTTwoWayProjection {
+public final class IInspectableProjection: WinRTProjectionObject<IInspectableProjection>, WinRTTwoWayProjection {
     public typealias SwiftType = IInspectable
     public typealias CStruct = CWinRT.IInspectable
     public typealias CVTableStruct = CWinRT.IInspectableVtbl
