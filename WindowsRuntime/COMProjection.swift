@@ -1,7 +1,7 @@
 import CWinRT
 
-// Protocol for strongly-typed COM interface projections into Swift.
-public protocol COMProjection: IUnknownProtocol {
+// A type which converts between a COM interface and a corresponding Swift value.
+public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == CPointer {
     associatedtype SwiftType
     associatedtype CStruct
     associatedtype CVTableStruct
@@ -9,14 +9,15 @@ public protocol COMProjection: IUnknownProtocol {
     typealias CVTablePointer = UnsafePointer<CVTableStruct>
 
     var _pointer: CPointer { get }
-    var _swiftValue: SwiftType { get }
 
-    init(_transferringRef pointer: CPointer)
+    init(transferringRef pointer: CPointer)
 
     static var iid: IID { get }
 }
 
 extension COMProjection {
+    public var abiValue: ABIType { _pointer }
+
     public var _unknown: UnsafeMutablePointer<CWinRT.IUnknown> {
         _pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
     }
@@ -29,38 +30,33 @@ extension COMProjection {
         }
     }
 
-    public init(_referencing pointer: CPointer) {
-        self.init(_transferringRef: pointer)
+    public init(_ pointer: CPointer) {
+        self.init(transferringRef: pointer)
         _unknown.addRef()
     }
 
-    public static func get(transferringRef pointer: CPointer) -> Self {
-        // TODO: Check for ISwiftObject first
-        return Self(_transferringRef: pointer)
+    public init(cleaningUp pointer: CPointer) {
+        self.init(transferringRef: pointer)
     }
 
-    public static func get(_ pointer: CPointer) -> Self {
-        let projection = get(transferringRef: pointer)
-        projection._unknown.addRef()
-        return projection
+    public static func toABI(_ value: SwiftType) throws -> ABIType {
+        switch value {
+            case let object as COMObjectBase<Self>:
+                object._unknown.addRef()
+                return object._pointer
+
+            case let unknown as IUnknown:
+                return try unknown._queryInterfacePointer(Self.self)
+
+            default:
+                throw ABIProjectionError.unsupported(SwiftType.self)
+        }
     }
 
-    public static func toSwift(transferringRef pointer: CPointer) -> SwiftType {
-        get(transferringRef: pointer)._swiftValue
-    }
-
-    public static func toSwift(_ pointer: CPointer) -> SwiftType {
-        get(pointer)._swiftValue
-    }
-
-    public static func toSwift(transferringRef pointer: CPointer?) throws -> SwiftType {
-        guard let pointer else { throw NullResult() }
-        return toSwift(transferringRef: pointer)
-    }
-
-    public static func toSwift(_ pointer: CPointer?) throws -> SwiftType {
-        guard let pointer else { throw NullResult() }
-        return toSwift(pointer)
+    public static func cleanup(_ pointer: CPointer) {
+        pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) {
+            _ = $0.release()
+        }
     }
 }
 

@@ -26,9 +26,9 @@ open class COMObject: IUnknownProtocol {
 // Base class for COM objects projected into Swift.
 open class COMObjectBase<Projection: COMProjection>: COMObject {
     public let _pointer: Projection.CPointer
-    public var _swiftValue: Projection.SwiftType { self as! Projection.SwiftType }
+    public var swiftValue: Projection.SwiftType { self as! Projection.SwiftType }
 
-    public required init(_transferringRef pointer: Projection.CPointer) {
+    public required init(transferringRef pointer: Projection.CPointer) {
         self._pointer = pointer
     }
 

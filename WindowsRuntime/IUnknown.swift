@@ -13,7 +13,7 @@ extension IUnknownProtocol {
     public func queryInterface<Projection: COMProjection>(_: Projection.Type) throws -> Projection {
         let pointer = try self._queryInterfacePointer(Projection.iid)
         return pointer.withMemoryRebound(to: Projection.CStruct.self, capacity: 1) {
-            return Projection.get(transferringRef: $0)
+            return Projection(transferringRef: $0)
         }
     }
 
