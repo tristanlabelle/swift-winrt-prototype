@@ -9,12 +9,12 @@ extension WindowsSecurityCryptographyCore_CryptographicHash {
     }
 
     public func getValueAndReset() throws -> WindowsStorageStreams_IBuffer {
-        try _objectGetter(_vtable.GetValueAndReset, WindowsStorageStreams_IBufferProjection.self)
+        try NullResult.unwrap(_getter(_vtable.GetValueAndReset, WindowsStorageStreams_IBufferProjection.self))
     }
 }
 
 extension WindowsSecurityCryptographyCore_HashAlgorithmProvider {
-    public var algorithmName: String { get throws { try _stringGetter(_vtable.get_AlgorithmName) } }
+    public var algorithmName: String { get throws { try _getter(_vtable.get_AlgorithmName, HStringProjection.self) } }
     public var hashLength: UInt32 { get throws { try _getter(_vtable.get_HashLength) } }
 
     public func hashData(_ data: WindowsStorageStreams_IBuffer!) throws -> WindowsStorageStreams_IBuffer {
@@ -26,7 +26,7 @@ extension WindowsSecurityCryptographyCore_HashAlgorithmProvider {
     }
 
     public func createHash() throws -> WindowsSecurityCryptographyCore_CryptographicHash {
-        try _objectGetter(_vtable.CreateHash, WindowsSecurityCryptographyCore_CryptographicHash.self)
+        try NullResult.unwrap(_getter(_vtable.CreateHash, WindowsSecurityCryptographyCore_CryptographicHash.self))
     }
 
     public static func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider {
