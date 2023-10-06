@@ -2,7 +2,7 @@ import CWinRT
 import COM
 import WindowsRuntime
 
-extension WindowsFoundation_AsyncStatus: WinRTEnum {
+extension WindowsFoundation_AsyncStatus: EnumProjection {
     public typealias CEnum = CWinRT.AsyncStatus
 }
 
