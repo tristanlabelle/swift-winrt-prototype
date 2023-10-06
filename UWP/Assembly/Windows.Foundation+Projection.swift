@@ -9,7 +9,7 @@ extension WindowsFoundation_AsyncStatus: EnumProjection {
 public enum WindowsFoundation_AsyncOperationCompletedHandlerProjection<TResult> {}
 
 public final class WindowsFoundation_IAsyncInfoProjection:
-        WinRTProjectionObject<WindowsFoundation_IAsyncInfoProjection>, WinRTProjection, WindowsFoundation_IAsyncInfoProtocol {
+        WinRTProjectionBase<WindowsFoundation_IAsyncInfoProjection>, WinRTProjection, WindowsFoundation_IAsyncInfoProtocol {
     public typealias SwiftType = WindowsFoundation_IAsyncInfo
     public typealias CStruct = CWinRT.IAsyncInfo
     public typealias CVTableStruct = CWinRT.IAsyncInfoVtbl

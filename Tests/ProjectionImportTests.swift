@@ -31,18 +31,22 @@ internal final class ProjectionImportTests: WinRTTestCase {
     }
 
     func testRefCountsThroughQueryInterface() throws {
+        func getCOMRefCount(_ value: IUnknown) -> UInt32 {
+            (value as? any COMProjection)?._unsafeRefCount ?? 0
+        }
+
         // HashAlgorithmProvider instances from openAlgorithm could be cached, 
         // but it wouldn't make sense for IBuffer instances
         let buffer = try HashAlgorithmProvider.openAlgorithm("SHA256").createHash().getValueAndReset()
-        XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(buffer), 1)
+        XCTAssertEqual(getCOMRefCount(buffer), 1)
 
         do {
             // Assume that the different COM interfaces share the same refcount
             let bufferByteAccess = try buffer.queryInterface(IBufferByteAccessProjection.self)
-            XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(buffer), 2)
-            XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(bufferByteAccess), 2)
+            XCTAssertEqual(getCOMRefCount(buffer), 2)
+            XCTAssertEqual(getCOMRefCount(bufferByteAccess), 2)
         }
 
-        XCTAssertEqual(COMProjectionObjectBase._getUnsafeRefCount(buffer), 1)
+        XCTAssertEqual(getCOMRefCount(buffer), 1)
     }
 }

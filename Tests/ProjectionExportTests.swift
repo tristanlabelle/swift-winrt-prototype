@@ -31,7 +31,7 @@ internal final class ProjectionExportTests: WinRTTestCase {
         let bufferByteAccess = try swiftBuffer.queryInterface(IBufferByteAccessProjection.self)
 
         // QueryInterface should succeed from/to any pair of implemented interfaces
-        let objects: [COMProjectionObjectBase] = [unknown, inspectable, bufferByteAccess, buffer]
+        let objects: [any IUnknownProtocol] = [unknown, inspectable, bufferByteAccess, buffer]
         for object in objects {
             _ = try object.queryInterface(IUnknownProjection.self)
             _ = try object.queryInterface(IInspectableProjection.self)

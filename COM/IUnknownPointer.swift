@@ -18,6 +18,14 @@ extension IUnknownPointer {
         self.pointee.lpVtbl.pointee.Release(self)
     }
 
+    public var _unsafeRefCount: UInt32 {
+        let postAddRef = addRef()
+        let postRelease = release()
+        assert(postRelease + 1 == postAddRef,
+            "Unexpected ref count change during _unsafeRefCount")
+        return postRelease
+    }
+
     public func queryInterface<Interface>(_ iid: IID, _ type: Interface.Type) throws -> UnsafeMutablePointer<Interface> {
         var iid = iid
         var pointer: UnsafeMutableRawPointer? = nil

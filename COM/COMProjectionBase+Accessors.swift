@@ -1,6 +1,6 @@
 import CWinRT
 
-extension COMProjectionObject {
+extension COMProjectionBase {
     public func _getter<Value>(_ function: (Projection.CPointer, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
         try withUnsafeTemporaryAllocation(of: Value.self, capacity: 1) { valueBuffer in
             let valuePointer = valueBuffer.baseAddress!

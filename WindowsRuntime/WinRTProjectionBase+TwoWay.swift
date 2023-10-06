@@ -1,7 +1,7 @@
 import CWinRT
 import COM
 
-extension WinRTProjectionObject where Projection: WinRTTwoWayProjection {
+extension WinRTProjectionBase where Projection: WinRTTwoWayProjection {
     public static func _getIids(
             _ this: Projection.CPointer?,
             _ count: UnsafeMutablePointer<UInt32>?,

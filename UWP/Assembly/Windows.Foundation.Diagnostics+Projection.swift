@@ -3,7 +3,7 @@ import COM
 import WindowsRuntime
 
 public final class WindowsFoundationDiagnostics_ErrorDetails:
-        WinRTProjectionObject<WindowsFoundationDiagnostics_ErrorDetails>, WinRTProjection {
+        WinRTProjectionBase<WindowsFoundationDiagnostics_ErrorDetails>, WinRTProjection {
     public typealias SwiftType = WindowsFoundationDiagnostics_ErrorDetails
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetails
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetailsVtbl
@@ -15,7 +15,7 @@ public final class WindowsFoundationDiagnostics_ErrorDetails:
 }
 
 internal final class WindowsFoundationDiagnostics_IErrorDetailsStatics:
-        WinRTProjectionObject<WindowsFoundationDiagnostics_IErrorDetailsStatics>, WinRTProjection {
+        WinRTProjectionBase<WindowsFoundationDiagnostics_IErrorDetailsStatics>, WinRTProjection {
     public typealias SwiftType = WindowsFoundationDiagnostics_IErrorDetailsStatics
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetailsStatics
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CFoundation_CDiagnostics_CIErrorDetailsStaticsVtbl

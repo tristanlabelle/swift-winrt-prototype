@@ -3,7 +3,7 @@ import COM
 import WindowsRuntime
 
 public final class WindowsSecurityCryptographyCore_CryptographicHash:
-        WinRTProjectionObject<WindowsSecurityCryptographyCore_CryptographicHash>, WinRTProjection {
+        WinRTProjectionBase<WindowsSecurityCryptographyCore_CryptographicHash>, WinRTProjection {
     public typealias SwiftType = WindowsSecurityCryptographyCore_CryptographicHash
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashComputation
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashComputationVtbl
@@ -13,7 +13,7 @@ public final class WindowsSecurityCryptographyCore_CryptographicHash:
 }
 
 public final class WindowsSecurityCryptographyCore_HashAlgorithmProvider:
-        WinRTProjectionObject<WindowsSecurityCryptographyCore_HashAlgorithmProvider>, WinRTProjection {
+        WinRTProjectionBase<WindowsSecurityCryptographyCore_HashAlgorithmProvider>, WinRTProjection {
     public typealias SwiftType = WindowsSecurityCryptographyCore_HashAlgorithmProvider
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProvider
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderVtbl
@@ -25,7 +25,7 @@ public final class WindowsSecurityCryptographyCore_HashAlgorithmProvider:
 }
 
 internal final class WindowsSecurityCryptographyCore_HashAlgorithmProviderStatics:
-        WinRTProjectionObject<WindowsSecurityCryptographyCore_HashAlgorithmProviderStatics>, WinRTProjection {
+        WinRTProjectionBase<WindowsSecurityCryptographyCore_HashAlgorithmProviderStatics>, WinRTProjection {
     public typealias SwiftType = WindowsSecurityCryptographyCore_HashAlgorithmProviderStatics
     public typealias CStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderStatics
     public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CSecurity_CCryptography_CCore_CIHashAlgorithmProviderStaticsVtbl

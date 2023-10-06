@@ -1,6 +1,6 @@
 import CWinRT
 
-// A type which converts between a COM interface and a corresponding Swift value.
+// A type which projects a COM interface to a corresponding Swift value.
 public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == CPointer {
     associatedtype CStruct
     associatedtype CVTableStruct
@@ -28,6 +28,8 @@ extension COMProjection {
         }
     }
 
+    public var _unsafeRefCount: UInt32 { _unknown._unsafeRefCount }
+
     public init(_ pointer: CPointer) {
         IUnknownPointer.addRef(pointer)
         self.init(transferringRef: pointer)
@@ -43,7 +45,7 @@ extension COMProjection {
 
     public static func toABI(_ value: SwiftType) throws -> ABIType {
         switch value {
-            case let object as COMProjectionObject<Self>:
+            case let object as COMProjectionBase<Self>:
                 return IUnknownPointer.addingRef(object._pointer)
 
             case let unknown as IUnknown:

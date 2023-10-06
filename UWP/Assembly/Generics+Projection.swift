@@ -2,7 +2,7 @@ import CWinRT
 import WindowsRuntime
 
 extension WindowsFoundation_AsyncOperationCompletedHandlerProjection where TResult == WindowsFoundationDiagnostics_ErrorDetails {
-    internal final class Instance: WinRTProjectionObject<Instance>, WinRTProjection {
+    internal final class Instance: WinRTProjectionBase<Instance>, WinRTProjection {
         public typealias TResult = WindowsFoundationDiagnostics_ErrorDetails
         public typealias SwiftType = WindowsFoundation_AsyncOperationCompletedHandler<TResult>
         public typealias CStruct = CWinRT.__FIAsyncOperationCompletedHandler_1_Windows__CFoundation__CDiagnostics__CErrorDetails
@@ -14,7 +14,7 @@ extension WindowsFoundation_AsyncOperationCompletedHandlerProjection where TResu
 }
 
 extension WindowsFoundation_IAsyncOperationProjection where TResult == WindowsFoundationDiagnostics_ErrorDetails {
-    internal final class Instance: WinRTProjectionObject<Instance>, WinRTProjection, WindowsFoundation_IAsyncOperationProtocol {
+    internal final class Instance: WinRTProjectionBase<Instance>, WinRTProjection, WindowsFoundation_IAsyncOperationProtocol {
         public typealias TResult = WindowsFoundationDiagnostics_ErrorDetails
         public typealias SwiftType = WindowsFoundation_IAsyncOperation<TResult>
         public typealias CStruct = CWinRT.__FIAsyncOperation_1_Windows__CFoundation__CDiagnostics__CErrorDetails

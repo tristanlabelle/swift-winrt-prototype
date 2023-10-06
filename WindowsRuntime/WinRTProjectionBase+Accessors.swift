@@ -1,7 +1,7 @@
 import CWinRT
 import COM
 
-extension WinRTProjectionObject {
+extension WinRTProjectionBase {
     public func _enumGetter<Enum: EnumProjection>(_ function: (Projection.CPointer, UnsafeMutablePointer<Enum.CEnum>?) -> HRESULT) throws -> Enum {
         Enum(try _getter(function))
     }
