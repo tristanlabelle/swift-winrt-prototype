@@ -16,8 +16,8 @@ public protocol COMProjection: ABIProjection, IUnknownProtocol where ABIType == 
 }
 
 extension COMProjection {
-    public var unknownPointer: UnsafeMutablePointer<CWinRT.IUnknown> {
-        pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
+    public var unknownPointer: IUnknownPointer {
+        IUnknownPointer.cast(pointer)
     }
 
     public var vtable: CVTableStruct {
@@ -56,9 +56,7 @@ extension COMProjection {
     }
 
     public static func release(_ pointer: CPointer) {
-        pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) {
-            _ = $0.release()
-        }
+        IUnknownPointer.release(pointer)
     }
 }
 

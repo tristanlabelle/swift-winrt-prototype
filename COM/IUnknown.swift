@@ -1,7 +1,7 @@
 import CWinRT
 
 public protocol IUnknownProtocol: AnyObject {
-    func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown>
+    func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer
 }
 public typealias IUnknown = any IUnknownProtocol
 

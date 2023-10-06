@@ -10,7 +10,7 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
 
     public init() {
         cstruct = CStruct()
-        cstruct.this = Unmanaged.passUnretained(self)
+        cstruct.object = Unmanaged.passUnretained(self)
     }
 
     internal var pointer: Projection.CPointer {
@@ -19,9 +19,9 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
         }
     }
 
-    internal var unknownPointer: UnsafeMutablePointer<CWinRT.IUnknown> {
+    internal var unknownPointer: IUnknownPointer {
         withUnsafeMutablePointer(to: &cstruct) {
-            $0.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
+            IUnknownPointer.cast($0)
         }
     }
 
@@ -29,11 +29,11 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
     //     Projection.self is (any WinRTProjection.Type)
     // }
 
-    public final func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
+    public final func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer {
         try _queryInterfacePointerImpl(iid)
     }
 
-    internal func _queryInterfacePointerImpl(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
+    internal func _queryInterfacePointerImpl(_ iid: IID) throws -> IUnknownPointer {
         switch iid {
             case IUnknownProjection.iid, comExportIID, Projection.iid:
                 return unknownPointer.withAddedRef() // The current object is the identity
@@ -48,46 +48,44 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
         }
     }
 
+    private static func cast(_ this: Projection.CPointer) -> UnsafeMutablePointer<CStruct> {
+        this.withMemoryRebound(to: CStruct.self, capacity: 1) { $0 }
+    }
+
     internal static func from(_ this: Projection.CPointer) -> COMExport<Projection> {
-        this.withMemoryRebound(to: CStruct.self, capacity: 1) {
-            $0.pointee.this.takeUnretainedValue()
-        }
+        cast(this).pointee.object.takeUnretainedValue()
     }
 
     @discardableResult
     internal static func addRef(_ this: Projection.CPointer) -> UInt32 {
-        this.withMemoryRebound(to: CStruct.self, capacity: 1) {
-            _ = $0.pointee.this.retain()
-            // Best effort refcount
-            return UInt32(_getRetainCount($0.pointee.this.takeUnretainedValue()))
-        }
+        let this = cast(this)
+        _ = this.pointee.object.retain()
+        // Best effort refcount
+        return UInt32(_getRetainCount(this.pointee.object.takeUnretainedValue()))
     }
 
     @discardableResult
     internal static func release(_ this: Projection.CPointer) -> UInt32 {
-        this.withMemoryRebound(to: CStruct.self, capacity: 1) {
-            let oldRetainCount = _getRetainCount($0.pointee.this.takeUnretainedValue())
-            $0.pointee.this.release()
-            // Best effort refcount
-            return UInt32(oldRetainCount - 1)
-        }
+        let this = cast(this)
+        let oldRetainCount = _getRetainCount(this.pointee.object.takeUnretainedValue())
+        this.pointee.object.release()
+        // Best effort refcount
+        return UInt32(oldRetainCount - 1)
     }
 
-    internal static func queryInterface(_ this: Projection.CPointer, _ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
-        try this.withMemoryRebound(to: CStruct.self, capacity: 1) {
-            try $0.pointee.this.takeUnretainedValue()._queryInterfacePointer(iid)
-        }
+    internal static func queryInterface(_ this: Projection.CPointer, _ iid: IID) throws -> IUnknownPointer {
+        try cast(this).pointee.object.takeUnretainedValue()._queryInterfacePointer(iid)
     }
 
     private struct CStruct {
         /// Virtual function table called by COM
         public let vtable: Projection.CVTablePointer = Projection.vtable
-        public var this: Unmanaged<COMExport<Projection>>! = nil
+        public var object: Unmanaged<COMExport<Projection>>! = nil
     }
 
     public struct QueriableInterface {
         public let iid: IID
-        public let queryPointer: (_: COMExport<Projection>) throws -> UnsafeMutablePointer<CWinRT.IUnknown>
+        public let queryPointer: (_: COMExport<Projection>) throws -> IUnknownPointer
 
         public init<TargetProjection: COMTwoWayProjection>(_: TargetProjection.Type) {
             self.iid = TargetProjection.iid
@@ -106,7 +104,7 @@ internal final class COMSecondaryExport<Projection: COMTwoWayProjection>: COMExp
         self.implementation = implementation
     }
 
-    internal override func _queryInterfacePointerImpl(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
+    internal override func _queryInterfacePointerImpl(_ iid: IID) throws -> IUnknownPointer {
         switch iid {
             case Projection.iid: return unknownPointer.withAddedRef()
             default:

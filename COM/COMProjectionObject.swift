@@ -1,7 +1,7 @@
 import CWinRT
 
 open class COMProjectionObjectBase: IUnknownProtocol {
-    public var unknownPointer: UnsafeMutablePointer<CWinRT.IUnknown> { fatalError() }
+    public var unknownPointer: IUnknownPointer { fatalError() }
 
     fileprivate init() {}
 
@@ -13,7 +13,7 @@ open class COMProjectionObjectBase: IUnknownProtocol {
         return postRelease
     }
 
-    public func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
+    public func _queryInterfacePointer(_ iid: IID) throws -> IUnknownPointer {
         try unknownPointer.queryInterface(iid)
     }
 
@@ -36,7 +36,7 @@ open class COMProjectionObject<Projection: COMProjection>: COMProjectionObjectBa
         _ = self.unknownPointer.release()
     }
 
-    public override final var unknownPointer: UnsafeMutablePointer<CWinRT.IUnknown> {
-        pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0 }
+    public override final var unknownPointer: IUnknownPointer {
+        IUnknownPointer.cast(pointer)
     }
 }

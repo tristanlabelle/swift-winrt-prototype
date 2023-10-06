@@ -1,6 +1,8 @@
 import CWinRT
 
-extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
+public typealias IUnknownPointer = UnsafeMutablePointer<CWinRT.IUnknown>
+
+extension IUnknownPointer {
     @discardableResult
     public func addRef() -> UInt32 {
         self.pointee.lpVtbl.pointee.AddRef(self)
@@ -11,12 +13,12 @@ extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
         self.pointee.lpVtbl.pointee.Release(self)
     }
 
-    public func withAddedRef() -> UnsafeMutablePointer<CWinRT.IUnknown> {
+    public func withAddedRef() -> IUnknownPointer {
         self.addRef()
         return self
     }
 
-    public func queryInterface<CStruct>(_ iid: IID, _ type: CStruct.Type) throws -> UnsafeMutablePointer<CStruct> {
+    public func queryInterface<Interface>(_ iid: IID, _ type: Interface.Type) throws -> UnsafeMutablePointer<Interface> {
         var iid = iid
         var pointer: UnsafeMutableRawPointer? = nil
         let hr = self.pointee.lpVtbl.pointee.QueryInterface(self, &iid, &pointer)
@@ -28,14 +30,44 @@ extension UnsafeMutablePointer where Pointee == CWinRT.IUnknown {
 
         if let error = HResult.Error(hresult: hr) {
             assertionFailure("QueryInterface failed but returned a non-null pointer")
-            pointer.bindMemory(to: CWinRT.IUnknown.self, capacity: 1).release()
+            IUnknownPointer.release(pointer)
             throw error
         }
 
-        return pointer.bindMemory(to: CStruct.self, capacity: 1)
+        return pointer.bindMemory(to: Interface.self, capacity: 1)
     }
 
-    public func queryInterface(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
-        try self.queryInterface(iid, CWinRT.IUnknown.self)
+    public func queryInterface(_ iid: IID) throws -> IUnknownPointer {
+        try self.queryInterface(iid, IUnknownPointer.Pointee.self)
+    }
+
+    // UnsafeMutableRawPointer helpers
+    public static func cast(_ pointer: UnsafeMutableRawPointer) -> IUnknownPointer {
+        pointer.bindMemory(to: IUnknownPointer.Pointee.self, capacity: 1)
+    }
+
+    @discardableResult
+    public static func addRef(_ pointer: UnsafeMutableRawPointer) -> UInt32 {
+        cast(pointer).addRef()
+    }
+
+    @discardableResult
+    public static func release(_ pointer: UnsafeMutableRawPointer) -> UInt32 {
+        cast(pointer).release()
+    }
+
+    // UnsafeMutablePointer<Interface> helpers
+    public static func cast<Interface>(_ pointer: UnsafeMutablePointer<Interface>) -> IUnknownPointer {
+        pointer.withMemoryRebound(to: IUnknownPointer.Pointee.self, capacity: 1) { $0 }
+    }
+
+    @discardableResult
+    public static func addRef<Interface>(_ pointer: UnsafeMutablePointer<Interface>) -> UInt32 {
+        cast(pointer).addRef()
+    }
+
+    @discardableResult
+    public static func release<Interface>(_ pointer: UnsafeMutablePointer<Interface>) -> UInt32 {
+        cast(pointer).release()
     }
 }

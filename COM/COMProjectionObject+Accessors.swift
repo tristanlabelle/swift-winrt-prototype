@@ -40,7 +40,7 @@ extension COMProjectionObject {
             _: ValueProjection.Type) throws where ValueProjection.SwiftType: IUnknownProtocol {
         if let value {
             let pointerWithRef = try value._queryInterfacePointer(ValueProjection.self)
-            defer { _ = pointerWithRef.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
+            defer { _ = IUnknownPointer.release(pointerWithRef) }
             try HResult.throwIfFailed(function(pointer, pointerWithRef))
         }
         else {
