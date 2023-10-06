@@ -29,7 +29,9 @@ extension WinRTProjectionBase where Projection: WinRTTwoWayProjection {
         guard let this, let className else { return HResult.invalidArg.value }
         className.pointee = nil
         let object = _getImplementation(this) as! IInspectable
-        return HResult.catchValue { className.pointee = try HSTRING.create(object.getRuntimeClassName()) }
+        return HResult.catchValue {
+            className.pointee = try HStringProjection.toABI(object.getRuntimeClassName())
+        }
     }
 
     public static func _getTrustLevel(
@@ -37,6 +39,8 @@ extension WinRTProjectionBase where Projection: WinRTTwoWayProjection {
             _ trustLevel: UnsafeMutablePointer<CWinRT.TrustLevel>?) -> HRESULT {
         guard let this, let trustLevel else { return HResult.invalidArg.value }
         let object = _getImplementation(this) as! IInspectable
-        return HResult.catchValue { trustLevel.pointee = try object.getTrustLevel() }
+        return HResult.catchValue {
+            trustLevel.pointee = try TrustLevel.toABI(object.getTrustLevel())
+        }
     }
 }

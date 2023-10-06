@@ -1,4 +1,3 @@
-import CWinRT
 import COM
 
 open class WinRTExport<Projection: WinRTTwoWayProjection>

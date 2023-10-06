@@ -17,17 +17,16 @@ open class WinRTProjectionBase<Projection: WinRTProjection>: COMProjectionBase<P
     }
 
     public func getRuntimeClassName() throws -> String {
-        var className: HSTRING?
-        let hr = _inspectable.pointee.lpVtbl.pointee.GetRuntimeClassName(_inspectable, &className)
-        defer { HSTRING.delete(className) }
-        try HResult.throwIfFailed(hr)
-        return className.toString()
+        // Can't use _getter because _pointer is not of type UnsafeMutablePointer<CWinRT.IInspectable>
+        var runtimeClassName: HSTRING?
+        try HResult.throwIfFailed(_inspectable.pointee.lpVtbl.pointee.GetRuntimeClassName(_inspectable, &runtimeClassName))
+        return HStringProjection.toSwift(consuming: runtimeClassName)
     }
 
-    public func getTrustLevel() throws -> CWinRT.TrustLevel {
+    public func getTrustLevel() throws -> TrustLevel {
+        // Can't use _getter because _pointer is not of type UnsafeMutablePointer<CWinRT.IInspectable>
         var trustLevel: CWinRT.TrustLevel = CWinRT.BaseTrust
-        let hr = _inspectable.pointee.lpVtbl.pointee.GetTrustLevel(_inspectable, &trustLevel)
-        try HResult.throwIfFailed(hr)
-        return trustLevel
+        try HResult.throwIfFailed(_inspectable.pointee.lpVtbl.pointee.GetTrustLevel(_inspectable, &trustLevel))
+        return TrustLevel.toSwift(trustLevel)
     }
 }
