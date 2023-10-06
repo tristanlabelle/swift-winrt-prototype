@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 public protocol IBufferByteAccessProtocol: IUnknownProtocol {
     var buffer: UnsafeMutablePointer<UInt8> { get throws }

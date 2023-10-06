@@ -1,7 +1,8 @@
 import XCTest
+import COM
+import WindowsRuntime
 import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
-import WindowsRuntime
 
 internal final class ProjectionExportTests: WinRTTestCase {
     func testIUnknownIdentityRule() throws {

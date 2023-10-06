@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 public protocol IInspectableProtocol: IUnknownProtocol {
     func getIids() throws -> [IID]

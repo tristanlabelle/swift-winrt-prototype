@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 public enum HStringProjection: ABIProjection {
     public typealias SwiftType = String

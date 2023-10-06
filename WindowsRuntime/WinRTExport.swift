@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 open class WinRTExport<Projection: WinRTTwoWayProjection>: COMExport<Projection>, IInspectableProtocol {
     public final func getIids() throws -> [IID] {

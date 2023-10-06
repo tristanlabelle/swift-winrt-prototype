@@ -1,3 +1,4 @@
+import COM
 import WindowsRuntime
 import UWP_WindowsStorageStreams
 

@@ -11,8 +11,12 @@ let package = Package(
             path: "CWinRT",
             linkerSettings: [ .linkedLibrary("WindowsApp.lib") ]),
         .target(
-            name: "WindowsRuntime",
+            name: "COM",
             dependencies: ["CWinRT"],
+            path: "COM"),
+        .target(
+            name: "WindowsRuntime",
+            dependencies: ["CWinRT", "COM"],
             path: "WindowsRuntime"),
         .target(
             name: "UWP_Assembly",
@@ -37,6 +41,7 @@ let package = Package(
         .testTarget(
             name: "Tests",
             dependencies: [
+                "COM",
                 "WindowsRuntime",
                 "UWP_WindowsFoundation",
                 "UWP_WindowsFoundationDiagnostics",

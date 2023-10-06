@@ -1,3 +1,4 @@
+import COM
 import WindowsRuntime
 
 public struct WindowsFoundation_AsyncStatus: Hashable {

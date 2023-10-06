@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 open class WinRTProjectionObject<Projection: WinRTProjection>: COMProjectionObject<Projection>, IInspectableProtocol {
     public var _inspectable: UnsafeMutablePointer<CWinRT.IInspectable> {

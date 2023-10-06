@@ -1,3 +1,4 @@
+import COM
 import WindowsRuntime
 
 extension WindowsSecurityCryptographyCore_CryptographicHash {

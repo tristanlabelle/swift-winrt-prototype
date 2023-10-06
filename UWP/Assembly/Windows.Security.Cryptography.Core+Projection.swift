@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 import WindowsRuntime
 
 public final class WindowsSecurityCryptographyCore_CryptographicHash:

@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 import WindowsRuntime
 
 extension WindowsFoundation_AsyncStatus: WinRTEnum {

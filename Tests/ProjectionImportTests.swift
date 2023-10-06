@@ -1,9 +1,10 @@
 import XCTest
+import COM
+import WindowsRuntime
 import UWP_WindowsFoundation
 import UWP_WindowsFoundationDiagnostics
 import UWP_WindowsSecurityCryptographyCore
 import UWP_WindowsStorageStreams
-import WindowsRuntime
 
 internal final class ProjectionImportTests: WinRTTestCase {
     func testActivationFactory() throws {

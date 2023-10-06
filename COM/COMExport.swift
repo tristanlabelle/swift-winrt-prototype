@@ -25,9 +25,9 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
         }
     }
 
-    internal var isInspectable: Bool {
-        Projection.self is (any WinRTProjection.Type)
-    }
+    // internal var isInspectable: Bool {
+    //     Projection.self is (any WinRTProjection.Type)
+    // }
 
     public final func _queryInterfacePointer(_ iid: IID) throws -> UnsafeMutablePointer<CWinRT.IUnknown> {
         try _queryInterfacePointerImpl(iid)
@@ -37,9 +37,10 @@ open class COMExport<Projection: COMTwoWayProjection>: IUnknownProtocol {
         switch iid {
             case IUnknownProjection.iid, comExportIID, Projection.iid:
                 return unknownPointer.withAddedRef() // The current object is the identity
-            case IInspectableProjection.iid:
-                guard isInspectable else { throw HResult.Error.noInterface }
-                return unknownPointer.withAddedRef()
+
+            // case IInspectableProjection.iid:
+            //     guard isInspectable else { throw HResult.Error.noInterface }
+            //     return unknownPointer.withAddedRef()
 
             default:
                 guard let interface = Self.queriableInterfaces.first(where: { $0.iid == iid }) else { throw HResult.Error.noInterface }

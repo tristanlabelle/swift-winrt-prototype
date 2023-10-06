@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 extension HSTRING {
     public static func create(_ value: String) throws -> HSTRING? {

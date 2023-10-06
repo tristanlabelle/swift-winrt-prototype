@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 public final class IInspectableProjection: WinRTProjectionObject<IInspectableProjection>, WinRTTwoWayProjection {
     public typealias SwiftType = IInspectable

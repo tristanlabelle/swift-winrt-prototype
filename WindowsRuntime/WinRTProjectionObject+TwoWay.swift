@@ -1,4 +1,5 @@
 import CWinRT
+import COM
 
 extension WinRTProjectionObject where Projection: WinRTTwoWayProjection {
     public static func _getIids(
