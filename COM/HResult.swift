@@ -63,6 +63,11 @@ public struct HResult: Hashable, CustomStringConvertible {
         defer { CWinRT.LocalFree(buffer) }
         guard dwResult > 0 else { return nil }
 
-        return String(decodingCString: buffer, as: UTF16.self)
+        var message = String(decodingCString: buffer, as: UTF16.self)
+        // Remove any trailing whitespaces
+        while let lastIndex = message.indices.last, message[lastIndex].isWhitespace {
+            message.remove(at: lastIndex)
+        }
+        return message
     }
 }
