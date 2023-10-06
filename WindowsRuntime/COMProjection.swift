@@ -33,12 +33,12 @@ extension COMProjection {
         unknownPointer.addRef()
     }
 
-    public static func toSwiftAndCleanup(_ value: ABIType) -> SwiftType {
-        Self(transferringRef: value).swiftValue
+    public static func toSwift(copying value: ABIType) -> SwiftType {
+        Self(value).swiftValue
     }
 
-    public static func toSwift(_ value: ABIType) -> SwiftType {
-        Self(value).swiftValue
+    public static func toSwift(consuming value: ABIType) -> SwiftType {
+        Self(transferringRef: value).swiftValue
     }
 
     public static func toABI(_ value: SwiftType) throws -> ABIType {
@@ -55,7 +55,7 @@ extension COMProjection {
         }
     }
 
-    public static func cleanup(_ pointer: CPointer) {
+    public static func release(_ pointer: CPointer) {
         pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) {
             _ = $0.release()
         }

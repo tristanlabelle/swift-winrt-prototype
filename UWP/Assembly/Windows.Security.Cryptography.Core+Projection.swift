@@ -34,7 +34,7 @@ internal final class WindowsSecurityCryptographyCore_HashAlgorithmProviderStatic
         defer { HSTRING.delete(algorithm) }
         var value: WindowsSecurityCryptographyCore_HashAlgorithmProvider.CPointer?
         try HResult.throwIfFailed(vtable.OpenAlgorithm(pointer, algorithm, &value))
-        return try NullResult.unwrap(WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(value))
+        return try NullResult.unwrap(WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(consuming: value))
     }
 
     public static let iid = IID(0x9FAC9741, 0x5CC4, 0x4336, 0xAE38, 0x6212B75A915A)

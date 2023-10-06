@@ -18,10 +18,10 @@ extension WindowsSecurityCryptographyCore_HashAlgorithmProvider {
 
     public func hashData(_ data: WindowsStorageStreams_IBuffer!) throws -> WindowsStorageStreams_IBuffer {
         let data = try data._queryInterfacePointer(WindowsStorageStreams_IBufferProjection.self)
-        defer { WindowsStorageStreams_IBufferProjection.cleanup(data) }
+        defer { WindowsStorageStreams_IBufferProjection.release(data) }
         var value: WindowsStorageStreams_IBufferProjection.CPointer?
         try HResult.throwIfFailed(vtable.HashData(pointer, data, &value))
-        return try NullResult.unwrap(WindowsStorageStreams_IBufferProjection.toSwiftAndCleanup(value))
+        return try NullResult.unwrap(WindowsStorageStreams_IBufferProjection.toSwift(consuming: value))
     }
 
     public func createHash() throws -> WindowsSecurityCryptographyCore_CryptographicHash {

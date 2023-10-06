@@ -19,6 +19,6 @@ extension WinRTProjection {
         defer { _ = unknown?.pointee.lpVtbl.pointee.Release(unknown) }
         try HResult.throwIfFailed(hr)
         guard let factory else { throw HResult.Error.noInterface }
-        return Factory.toSwift(factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
+        return Factory.toSwift(copying: factory.bindMemory(to: Factory.CStruct.self, capacity: 1))
     }
 }

@@ -14,15 +14,13 @@ extension COMObjectBase {
     }
 
     public func _stringGetter(_ function: (Projection.CPointer, UnsafeMutablePointer<CWinRT.HSTRING?>?) -> HRESULT) throws -> String {
-        HSTRING.toStringAndDelete(try _getter(function))
+        HStringProjection.toSwift(consuming: try _getter(function))
     }
 
     public func _objectGetter<ValueProjection: COMProjection>(
             _ function: (Projection.CPointer, UnsafeMutablePointer<ValueProjection.CPointer?>?) -> HRESULT,
             _: ValueProjection.Type) throws -> ValueProjection.SwiftType {
-        guard let pointer = try _getter(function) else { throw NullResult() }
-        defer { _ = pointer.withMemoryRebound(to: CWinRT.IUnknown.self, capacity: 1) { $0.release() } }
-        return ValueProjection.toSwift(pointer)
+        return ValueProjection.toSwift(consuming: try NullResult.unwrap(_getter(function)))
     }
 
     public func _setter<Value>(_ function: (Projection.CPointer, Value) -> HRESULT, _ value: Value) throws {
