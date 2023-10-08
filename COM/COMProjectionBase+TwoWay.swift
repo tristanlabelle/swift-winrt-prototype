@@ -2,12 +2,12 @@ import CWinRT
 
 extension COMProjectionBase where Projection: COMTwoWayProjection {
     public static func _getImplementation(_ pointer: Projection.CPointer) -> Projection.SwiftValue {
-        COMExport<Projection>.from(pointer) as! Projection.SwiftValue
+        COMExport<Projection>.from(pointer).implementation
     }
 
     public static func _getImplementation(_ pointer: Projection.CPointer?) -> Projection.SwiftValue? {
         guard let pointer else { return nil }
-        return (COMExport<Projection>.from(pointer) as! Projection.SwiftValue)
+        return Optional(_getImplementation(pointer))
     }
 
     public static func _implement(_ this: Projection.CPointer?, _ body: (Projection.SwiftValue) throws -> Void) -> HRESULT {

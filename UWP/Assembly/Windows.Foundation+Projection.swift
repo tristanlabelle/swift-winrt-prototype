@@ -114,7 +114,7 @@ public enum WindowsFoundation_TypedEventHandlerProjection<TSender, TResult> {}
 
 extension WindowsFoundation_TypedEventHandlerProjection
         where TSender == WindowsFoundation_IMemoryBufferReference?, TResult == WindowsRuntime.IInspectable? {
-    internal final class Instance: COMProjectionBase<Instance>, COMTwoWayProjection {
+    internal final class Instance: WinRTDelegateProjectionBase<Instance>, COMTwoWayProjection {
         public typealias SwiftValue = WindowsFoundation_TypedEventHandler<TSender, TResult>
         public typealias CStruct = CWinRT.__FITypedEventHandler_2_Windows__CFoundation__CIMemoryBufferReference_IInspectable
         public typealias CVTableStruct = CWinRT.__FITypedEventHandler_2_Windows__CFoundation__CIMemoryBufferReference_IInspectableVtbl
