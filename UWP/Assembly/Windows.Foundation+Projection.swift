@@ -24,3 +24,34 @@ public final class WindowsFoundation_IAsyncInfoProjection:
     public func cancel() throws { try HResult.throwIfFailed(_vtable.Cancel(_pointer)) }
     public func close() throws { try HResult.throwIfFailed(_vtable.Close(_pointer)) }
 }
+
+public enum WindowsFoundation_IAsyncOperationProjection<TResult> {}
+
+public final class WindowsFoundation_IClosableProjection:
+        WinRTProjectionBase<WindowsFoundation_IClosableProjection>, WinRTProjection, WindowsFoundation_IClosableProtocol {
+    public typealias SwiftValue = WindowsFoundation_IClosable
+    public typealias CStruct = CWinRT.__x_ABI_CWindows_CFoundation_CIClosable
+    public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CFoundation_CIClosableVtbl
+
+    public static let iid = IID(0x30D5A829, 0x7FA4, 0x4026, 0x83BB, 0xD75BAE4EA99E)
+    public static var runtimeClassName: String { "Windows.Foundation.IClosable" }
+
+    public func close() throws { try HResult.throwIfFailed(_vtable.Close(_pointer)) }
+}
+
+public final class WindowsFoundation_MemoryBuffer:
+        WinRTProjectionBase<WindowsFoundation_MemoryBuffer>, WinRTProjection,
+        WindowsFoundation_IClosableProtocol {
+    public typealias SwiftValue = WindowsFoundation_MemoryBuffer
+    public typealias CStruct = CWinRT.__x_ABI_CWindows_CFoundation_CIMemoryBuffer
+    public typealias CVTableStruct = CWinRT.__x_ABI_CWindows_CFoundation_CIMemoryBufferVtbl
+
+    public static let iid = IID(0xFBC4DD2A, 0x245B, 0x11E4, 0xAF98, 0x689423260CF8)
+    public static var runtimeClassName: String { "Windows.Foundation.MemoryBuffer" }
+
+    private lazy var closable = Result { try queryInterface(WindowsFoundation_IClosableProjection.self) }
+
+    public func close() throws { try closable.get().close() }
+}
+
+public enum WindowsFoundation_TypedEventHandlerProjection<TSender, TResult> {}

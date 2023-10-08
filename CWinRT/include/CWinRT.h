@@ -9,6 +9,7 @@
 #include "IBufferByteAccess.h"
 #include "ISwiftObject.h"
 
+#include <EventToken.h>
 #include <windows.foundation.h>
 #include <windows.foundation.diagnostics.h>
 #include <windows.foundation.collections.h>

@@ -32,4 +32,19 @@ public protocol WindowsFoundation_IAsyncOperationProtocol<TResult>: IInspectable
     func getResults() throws -> TResult;
 }
 public typealias WindowsFoundation_IAsyncOperation<TResult> = any WindowsFoundation_IAsyncOperationProtocol<TResult>
-public enum WindowsFoundation_IAsyncOperationProjection<TResult> {}
+
+public protocol WindowsFoundation_IClosableProtocol: IInspectableProtocol {
+    func close() throws
+}
+public typealias WindowsFoundation_IClosable = any WindowsFoundation_IClosableProtocol
+
+public protocol WindowsFoundation_IMemoryBufferReferenceProtocol: IInspectableProtocol, WindowsFoundation_IClosableProtocol {
+    var capacity: UInt32 { get throws }
+    func add_Closed(_ handler: WindowsFoundation_TypedEventHandler<WindowsFoundation_IMemoryBufferReference, IInspectable>!) throws -> EventRegistrationToken
+    func remove_Closed(_ cookie: EventRegistrationToken) throws
+}
+public typealias WindowsFoundation_IMemoryBufferReference = any WindowsFoundation_IMemoryBufferReferenceProtocol
+
+extension WindowsFoundation_MemoryBuffer {}
+
+public typealias WindowsFoundation_TypedEventHandler<TSender, TResult> = (_ sender: TSender, _ args: TResult) -> Void
