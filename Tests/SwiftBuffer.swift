@@ -4,7 +4,8 @@ import UWP_WindowsStorageStreams
 
 internal final class SwiftBuffer: WinRTExportBase<IBufferProjection>, IBufferProtocol, IBufferByteAccessProtocol {
     override class var queriableInterfaces: [COMExportInterface] { [
-        .init(IBufferProjection.self), .init(IBufferByteAccessProjection.self)
+        .init(IBufferProjection.self),
+        .init(IBufferByteAccessProjection.self)
     ] }
 
     let bufferPointer: UnsafeMutableBufferPointer<UInt8>
