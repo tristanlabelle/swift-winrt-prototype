@@ -81,7 +81,7 @@ internal final class WindowsFoundation_IMemoryBufferFactory:
     }
 }
 
-internal final class WindowsFoundation_IMemoryBufferReferenceProjection:
+public final class WindowsFoundation_IMemoryBufferReferenceProjection:
         WinRTProjectionBase<WindowsFoundation_IMemoryBufferReferenceProjection>, WinRTProjection,
         WindowsFoundation_IMemoryBufferReferenceProtocol {
     public typealias SwiftValue = WindowsFoundation_IMemoryBufferReference

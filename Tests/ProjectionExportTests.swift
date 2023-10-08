@@ -39,4 +39,8 @@ internal final class ProjectionExportTests: WinRTTestCase {
             _ = try object.queryInterface(IBufferByteAccessProjection.self)
         }
     }
+
+    func testRoundTripToOriginalSwiftObject() throws {
+        XCTFail("TODO: Test that sending a Swift object to WinRT and back returns the original Swift object")
+    }
 }

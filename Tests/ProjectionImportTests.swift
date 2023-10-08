@@ -24,10 +24,13 @@ internal final class ProjectionImportTests: WinRTTestCase {
         XCTAssertEqual(Array(bufferPointer), sha256OfEmpty) 
     }
 
-    func testAsyncMethodAndDelegates() throws {
-        let asyncOperation = try ErrorDetails.createFromHResultAsync(HResult.fail)
-        let asyncInfo = try asyncOperation.queryInterface(IAsyncInfoProjection.self)
-        XCTAssertEqual(try asyncInfo.status, .started)
+    func testEventHandlingWithDelegate() throws {
+        let memoryBuffer = try MemoryBuffer.create(1)
+        let reference = try memoryBuffer.createReference()
+        var closedEventRaised = false
+        try reference.add_Closed({ _, _ in closedEventRaised = true })
+        try reference.close()
+        XCTAssertTrue(closedEventRaised)
     }
 
     func testRefCountsThroughQueryInterface() throws {
