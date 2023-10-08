@@ -24,8 +24,8 @@ internal final class WindowsFoundationDiagnostics_IErrorDetailsStatics:
     public static var runtimeClassName: String { "Windows.Foundation.Diagnostics.IErrorDetailsStatics" }
 
     public func createFromHResultAsync(_ errorCode: HResult) throws -> WindowsFoundation_IAsyncOperation<WindowsFoundationDiagnostics_ErrorDetails> {
-        var result: WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.CPointer?
-        try HResult.throwIfFailed(_vtable.CreateFromHResultAsync(_pointer, errorCode.value, &result))
-        return try NullResult.unwrap(WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.toSwift(consuming: result))
+        return try NullResult.unwrap(_withOutParam(WindowsFoundation_IAsyncOperationProjection<WindowsFoundationDiagnostics_ErrorDetails>.Instance.self) {
+            _vtable.CreateFromHResultAsync(_pointer, errorCode.value, $0)
+        })
     }
 }

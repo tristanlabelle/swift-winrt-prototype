@@ -33,9 +33,9 @@ internal final class WindowsSecurityCryptographyCore_HashAlgorithmProviderStatic
     public func openAlgorithm(_ algorithm: String) throws -> WindowsSecurityCryptographyCore_HashAlgorithmProvider {
         let algorithm = try HStringProjection.toABI(algorithm)
         defer { HStringProjection.release(algorithm) }
-        var value: WindowsSecurityCryptographyCore_HashAlgorithmProvider.CPointer?
-        try HResult.throwIfFailed(_vtable.OpenAlgorithm(_pointer, algorithm, &value))
-        return try NullResult.unwrap(WindowsSecurityCryptographyCore_HashAlgorithmProvider.toSwift(consuming: value))
+        return try NullResult.unwrap(_withOutParam(WindowsSecurityCryptographyCore_HashAlgorithmProvider.self) {
+            _vtable.OpenAlgorithm(_pointer, algorithm, $0)
+        })
     }
 
     public static let iid = IID(0x9FAC9741, 0x5CC4, 0x4336, 0xAE38, 0x6212B75A915A)

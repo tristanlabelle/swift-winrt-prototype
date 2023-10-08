@@ -75,9 +75,9 @@ internal final class WindowsFoundation_IMemoryBufferFactory:
     public static var runtimeClassName: String { "Windows.Foundation.IMemoryBufferFactory" }
 
     public func create(_ capacity: UInt32) throws -> WindowsFoundation_MemoryBuffer {
-        var result: UnsafeMutablePointer<CWinRT.__x_ABI_CWindows_CFoundation_CIMemoryBuffer>?
-        try HResult.throwIfFailed(_vtable.Create(_pointer, capacity, &result))
-        return try NullResult.unwrap(WindowsFoundation_MemoryBuffer.toSwift(consuming: result))
+        return try NullResult.unwrap(_withOutParam(WindowsFoundation_MemoryBuffer.self) {
+            _vtable.Create(_pointer, capacity, $0)
+        })
     }
 }
 
@@ -95,9 +95,9 @@ public final class WindowsFoundation_IMemoryBufferReferenceProjection:
     public func add_Closed(_ handler: WindowsFoundation_TypedEventHandler<WindowsFoundation_IMemoryBufferReference?, WindowsRuntime.IInspectable?>!) throws -> WindowsRuntime.EventRegistrationToken {
         let handler = try WindowsFoundation_TypedEventHandlerProjection<WindowsFoundation_IMemoryBufferReference?, WindowsRuntime.IInspectable?>.Instance.toABI(handler)
         defer { WindowsFoundation_TypedEventHandlerProjection<WindowsFoundation_IMemoryBufferReference?, WindowsRuntime.IInspectable?>.Instance.release(handler) }
-        var result: CWinRT.EventRegistrationToken = .init()
-        try HResult.throwIfFailed(_vtable.add_Closed(_pointer, handler, &result))
-        return WindowsRuntime.EventRegistrationToken.toSwift(result)
+        return try _withOutParam(WindowsRuntime.EventRegistrationToken.self) {
+            _vtable.add_Closed(_pointer, handler, $0)
+        }
     }
     public func remove_Closed(_ cookie: WindowsRuntime.EventRegistrationToken) throws {
         let cookie = try WindowsRuntime.EventRegistrationToken.toABI(cookie)
@@ -111,25 +111,3 @@ public final class WindowsFoundation_IMemoryBufferReferenceProjection:
 }
 
 public enum WindowsFoundation_TypedEventHandlerProjection<TSender, TResult> {}
-
-extension WindowsFoundation_TypedEventHandlerProjection
-        where TSender == WindowsFoundation_IMemoryBufferReference?, TResult == WindowsRuntime.IInspectable? {
-    internal final class Instance: WinRTDelegateProjectionBase<Instance>, COMTwoWayProjection {
-        public typealias SwiftValue = WindowsFoundation_TypedEventHandler<TSender, TResult>
-        public typealias CStruct = CWinRT.__FITypedEventHandler_2_Windows__CFoundation__CIMemoryBufferReference_IInspectable
-        public typealias CVTableStruct = CWinRT.__FITypedEventHandler_2_Windows__CFoundation__CIMemoryBufferReference_IInspectableVtbl
-
-        public static let iid = IID(0xF4637D4A, 0x0760, 0x5431, 0xBFC0, 0x24EB1D4F6C4F)
-        public static var vtable: CVTablePointer { withUnsafePointer(to: &vtableStruct) { $0 } }
-        private static var vtableStruct: CVTableStruct = .init(
-            QueryInterface: { this, iid, ppvObject in _queryInterface(this, iid, ppvObject) },
-            AddRef: { this in _addRef(this) },
-            Release: { this in _release(this) },
-            Invoke: { this, sender, args in _implement(this) { handler in
-                let sender = WindowsFoundation_IMemoryBufferReferenceProjection.toSwift(copying: sender)
-                let args = WindowsRuntime.IInspectableProjection.toSwift(copying: args)
-                try handler(sender, args)
-            } }
-        )
-    }
-}

@@ -1,13 +1,25 @@
 import CWinRT
 
 extension COMProjectionBase {
+    public func _withOutParam<ValueProjection: ABIProjection>(
+        _: ValueProjection.Type,
+        _ body: (UnsafeMutablePointer<ValueProjection.ABIValue>) -> HRESULT) throws -> ValueProjection.SwiftValue {
+        try withUnsafeTemporaryAllocation(of: ValueProjection.ABIValue.self, capacity: 1) { valueBuffer in
+            let valuePointer = valueBuffer.baseAddress!
+            try HResult.throwIfFailed(body(valuePointer))
+            return ValueProjection.toSwift(consuming: valuePointer.pointee)
+        }
+    }
+
+    public func _withOutParam<ValueProjection: ABIProjection>(
+        _: ValueProjection.Type,
+        _ body: (UnsafeMutablePointer<ValueProjection.ABIValue?>) -> HRESULT) throws -> ValueProjection.SwiftValue? {
+        try _withOutParam(OptionalProjection<ValueProjection>.self, body)
+    }
+
     public func _getter<Value>(
             _ function: (Projection.CPointer?, UnsafeMutablePointer<Value>?) -> HRESULT) throws -> Value {
-        try withUnsafeTemporaryAllocation(of: Value.self, capacity: 1) { valueBuffer in
-            let valuePointer = valueBuffer.baseAddress!
-            try HResult.throwIfFailed(function(_pointer, valuePointer))
-            return valuePointer.pointee
-        }
+        try _withOutParam(IdentityProjection<Value>.self) { function(_pointer, $0) }
     }
 
     public func _getter<ValueProjection: ABIProjection>(
