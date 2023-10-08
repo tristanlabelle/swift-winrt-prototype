@@ -40,11 +40,11 @@ public typealias WindowsFoundation_IClosable = any WindowsFoundation_IClosablePr
 
 public protocol WindowsFoundation_IMemoryBufferReferenceProtocol: IInspectableProtocol, WindowsFoundation_IClosableProtocol {
     var capacity: UInt32 { get throws }
-    func add_Closed(_ handler: WindowsFoundation_TypedEventHandler<WindowsFoundation_IMemoryBufferReference, IInspectable>!) throws -> EventRegistrationToken
+    func add_Closed(_ handler: WindowsFoundation_TypedEventHandler<WindowsFoundation_IMemoryBufferReference?, IInspectable?>!) throws -> EventRegistrationToken
     func remove_Closed(_ cookie: EventRegistrationToken) throws
 }
 public typealias WindowsFoundation_IMemoryBufferReference = any WindowsFoundation_IMemoryBufferReferenceProtocol
 
-extension WindowsFoundation_MemoryBuffer {}
+extension WindowsFoundation_MemoryBuffer: WindowsFoundation_IClosableProtocol {}
 
-public typealias WindowsFoundation_TypedEventHandler<TSender, TResult> = (_ sender: TSender, _ args: TResult) -> Void
+public typealias WindowsFoundation_TypedEventHandler<TSender, TResult> = (_ sender: TSender, _ args: TResult) throws -> Void
